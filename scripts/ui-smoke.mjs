@@ -53,7 +53,7 @@ module.apply({
 if (slots.length !== 1) throw new Error('settings.section was not registered')
 const Page = slots[0].component
 const html = ReactDOMServer.renderToString(React.createElement(Page))
-for (const expected of ['技能商店', '安装新技能', '已安装', 'SkillHub']) {
+for (const expected of ['技能商店', '安装新技能', '已安装', 'SkillHub', 'MCP 连接器']) {
   if (!html.includes(expected)) throw new Error(`rendered page is missing: ${expected}`)
 }
 console.log(`UI smoke OK (${String(html.length)} chars)`)

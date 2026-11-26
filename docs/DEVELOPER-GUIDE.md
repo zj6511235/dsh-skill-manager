@@ -19,7 +19,9 @@ dsh-skill-manager/
 │     ├─ source.ts         安装源分类（npm/GitHub/SkillHub/zip/本地）
 │     ├─ skillhub.ts       SkillHub 公开 API 客户端
 │     ├─ external.ts       其他 Agent 技能目录扫描
-│     ├─ registry.ts       ctx.skills / ctx.mcpManager 注册
+│     ├─ mcp-scan.ts       其他 Agent 的 MCP 配置扫描（JSON/TOML）、打码、引用解析
+│     ├─ catalog.ts        连接器市场目录、{{field}} → ${credential:…} 模板、输入校验
+│     ├─ registry.ts       ctx.skills / ctx.mcpManager 注册、状态与 probe
 │     ├─ process.ts        受限子进程、超时、日志脱敏
 │     ├─ frontmatter.ts    YAML frontmatter 子集解析
 │     └─ safe-path.ts      路径/名称校验
@@ -99,7 +101,12 @@ CI 或普通机器上想去掉也可以，测试本身不依赖它。
 - 注册控制器：`ctx.skills.register` / `ctx.mcpManager.register`、卸载释放；
 - Host 路由：状态、安装、启停、移除、错误码、405/404；
 - `apply()`：路由前缀、`requestRejection` 失败关闭；
-- `client.js`：只调用一次 `__ModuleLoader__.load`，注册 `settings.section`。
+- `client.js`：只调用一次 `__ModuleLoader__.load`，注册 `settings.section`；
+- MCP 引用（`test/mcp.test.mjs`）：Claude Code / Cursor / Codex 配置扫描、TOML 子集、
+  值不外泄、粘贴配置添加、原地引用、`/mcp` 路由、registry 的实时解析与 probe。
+- 连接器市场（`test/catalog.test.mjs`）：目录自检（id、必需字段、占位符合法）、
+  可选字段留空后整条 `env` 被去掉、输入校验、`/catalog` 与 `/catalog/install` 的
+  凭据写入与移除清理、无凭据服务时拒绝落盘、Windows `cmd.exe` 包装。
 
 真实网络的 SkillHub 安装属于「未在自动测试里覆盖」的部分，可用 CLI 手动验证：
 
@@ -174,6 +181,12 @@ dsh plugin --profile web add link:C:\Users\you\Desktop\agent\dsh-skill-manager
 | POST | `/import` | `{path, enable?, force?}`，复制进本库 |
 | GET | `/search?q=&page=` | SkillHub 搜索 |
 | GET | `/skillhub?slug=` | SkillHub 详情 |
+| GET | `/mcp` | MCP 条目、实时状态、其他 Agent 的候选与平台、`capabilities` |
+| POST | `/mcp/add` | `{json: string}` 或 `{server: object}`，添加 MCP 连接器 |
+| POST | `/mcp/link` | `{keys: string[]}`，引用扫描到的 MCP（Host 重新校验 key） |
+| POST | `/mcp/probe` | `{id, server}`，调用 `mcpManager.probe()` 测试连接 |
+| GET | `/catalog` | 连接器市场目录（`entries`, `credentials` 表示是否有凭据服务） |
+| POST | `/catalog/install` | `{id, values}`，写入凭据并把连接器装成 `mcp-<id>` 条目 |
 
 错误统一为 `{ error, code }`；`code` 取值见 `src/lib/errors.ts`。
 
@@ -211,6 +224,40 @@ MCP 管理器，由 DSH 在运行时解析，插件不读取、不落盘。
 `externalPath`。注册时 `resourceBase` 和 MCP 的 `cwd` 都指向原目录；不写
 `skill.json`、不装依赖、不复制。移除时只删 index 条目，绝不删除原目录。`repair`
 对这类条目直接报错，避免把依赖写进别的 Agent 的目录。
+
+### MCP 连接器与引用
+
+MCP 条目有两种：
+
+- **本库**：`origin: "store"`，`skills: []`，`mcpServers: [McpSpec]`，索引里保存完整
+  配置（含 `env`），`dir` 为 `mcp/<id>` 但不创建目录。`registry` 只在 MCP 有相对
+  `command` / `cwd` 时才要求目录存在。
+- **引用**：`origin: "external"`，`mcpServers: []`，`mcpRefs: [{name, agent, agentLabel, file, scope}]`。
+  索引里**只有位置**。`RegistrationController.collectServers()` 每次刷新都用
+  `resolveMcpRef()` 重新读原文件拿到 command/url/env/headers，再注册成
+  `skm_<entryId>_<server>`；因此原 Agent 改了配置或换了 token，这里自动生效，且
+  密钥永远不落本库。
+- **市场安装**：`source.value = "catalog:<id>"`，`mcpServers[0].catalogId = "<id>"`。
+  `src/lib/catalog.ts` 用 `{{field}}` 占位符描述连接器，`buildConnectorSpec()` 把它换成
+  `${credential:SKM_<ID>_<FIELD>}`；`POST /catalog/install` 先 `ctx.credentials.set()`
+  存值，再走 `store.addMcpServers()`。`/remove` 对 `catalog:` 条目会反解模板里的引用名并
+  `unset`，凭据不残留。用户没填的可选字段连整条 `env` 一起去掉，不会留下
+  `waiting-credentials`。
+- **Windows 启动器**：`npx` / `npm` 在 win32 上是 `.cmd`，但 `dsh-mcp-client` 用 `cross-spawn`
+  启动子进程，会自己解析 shim，所以插件原样注册 `command: 'npx'`，不加 shell 包装（加了反而
+  会被二次转义）。
+
+`/mcp/link` 只接受客户端从 `/mcp` 拿到的候选 key，Host 重新扫描后按 key 反查
+`McpRef`；`store.linkMcpRefs()` 再用 `isKnownMcpFile()` 校验目标确实是已知配置文件。
+这两道校验一起保证路由不能变成任意文件读取。
+
+同一台机器上同一份配置可能同时出现在“全局”与“当前项目”两个根（工作目录就是 home
+时）。`scanExternalMcp()` 按文件路径去重；同一个文件里不同 `scope`（Claude Code 的
+`projects.*`）下的同名服务用 `scope` 的目录名区分 id，避免互相覆盖。
+
+`registry.mcpRows()` 把 `mcpManager.list()` 的状态映射回条目，供面板展示；
+`registry.probe(entryId, server)` 转调 `mcpManager.probe()`，不触碰运行中的实例。
+未注入 `mcpManager` 时状态显示 `unavailable`，probe 返回错误而不是抛异常。
 
 设置页的「直接使用其他 Agent」把 `/scan` 的候选按 `agentLabel` 分组；勾选后调用
 `/link {paths}`，`linkMany()` 在写索引前统一校验，整批要么全部生效要么完全不改。
@@ -271,6 +318,10 @@ dsh-skill import <path> [--force]               # 复制安装
 dsh-skill enable|disable <id>
 dsh-skill repair <id>
 dsh-skill remove <id> --yes
+dsh-skill mcp-list [--json]
+dsh-skill mcp-scan [--json]
+dsh-skill mcp-add <config.json|-> [--force]
+dsh-skill mcp-link <agent>:<name...> [--force]
 ```
 
 `--store <dir>` 可指向隔离目录，便于测试：

@@ -44,6 +44,59 @@ export interface McpSpec {
   headers?: Record<string, string>
   startupTimeoutMs?: number
   toolCallTimeoutMs?: number
+  /** Set on catalog installs: which marketplace connector produced this entry. */
+  catalogId?: string
+}
+
+/** One input the marketplace asks for before a connector can be connected. */
+export interface ConnectorField {
+  /** Placeholder name used inside the connector template, e.g. `token`. */
+  key: string
+  label: string
+  hint?: string
+  placeholder?: string
+  /** The value is stored as a DSH credential, never in the store index. */
+  secret?: boolean
+  required?: boolean
+}
+
+export type ConnectorCategory = 'efficiency' | 'developer' | 'search' | 'data' | 'china' | 'demo'
+
+/**
+ * A connector the marketplace can install in one click.
+ *
+ * Values never live here: `env`, `headers`, `url` and `args` carry
+ * `{{field}}` placeholders that become `${credential:REF}` templates, so the
+ * index only ever holds a reference.
+ */
+export interface CatalogConnector {
+  /** Stable id, also the MCP server name. */
+  id: string
+  name: string
+  vendor: string
+  category: ConnectorCategory
+  description: string
+  /** Single emoji shown on the card. */
+  icon: string
+  docs: string
+  transport: 'stdio' | 'streamable-http'
+  command?: string
+  args?: string[]
+  url?: string
+  env?: Record<string, string>
+  headers?: Record<string, string>
+  fields: ConnectorField[]
+}
+
+/** Catalog entry plus what this store already knows about it. */
+export interface CatalogConnectorView extends Omit<CatalogConnector, 'env' | 'headers'> {
+  /** Credential reference names the connector will use (never their values). */
+  credentialRefs: string[]
+  installed: boolean
+  entryId?: string
+  enabled?: boolean
+  /** Every required credential reference is present in the credentials store. */
+  credentialReady: boolean
 }
 
 export interface DependencySpec {
@@ -60,6 +113,75 @@ export interface Provenance {
   origin: string
   /** External agent root for imported skills, e.g. "claude-code". */
   agent?: string
+}
+
+/**
+ * One MCP server used where another agent already configured it.
+ *
+ * Only the location is stored — never an env value or header — so a secret in
+ * another agent's config never enters this store. The live entry is re-read
+ * from `file` at registration time.
+ */
+export interface McpRef {
+  /** Server key as written in the source config. */
+  name: string
+  /** Absolute path of the source config file. */
+  file: string
+  /** Stable platform key, e.g. claude-code. */
+  agent: string
+  /** Human label of that platform. */
+  agentLabel: string
+  /** Sub-scope inside one file (a Claude Code project path, for example). */
+  scope?: string
+}
+
+/** A discovered MCP server in another agent's config, shown in the panel. */
+export interface ExternalMcpCandidate {
+  /** Stable key for selection: `agent|file|scope|name`. */
+  key: string
+  name: string
+  agent: string
+  agentLabel: string
+  file: string
+  scope?: string
+  transport: 'stdio' | 'streamable-http'
+  /** Display-only target: command line or URL. Never contains a secret. */
+  summary: string
+  /** Names of env/header keys (values are never read out). */
+  envKeys: string[]
+  /** True for a server this store already references. */
+  linked: boolean
+  linkedId?: string
+  /** Set when the entry exists but cannot be referenced as-is. */
+  invalid?: boolean
+  invalidReason?: string
+}
+
+/** One config file that may hold MCP servers. */
+export interface McpConfigSource {
+  path: string
+  agent: string
+  label: string
+  format: 'json' | 'toml'
+}
+
+/** A platform (agent) holding at least one MCP config file on this computer. */
+export interface McpPlatformScan {
+  agent: string
+  label: string
+  path: string
+  count: number
+}
+
+/** Live connection state reported by DSH's MCP manager for one server. */
+export interface McpServerStatus {
+  registeredAs: string
+  entryId: string
+  entryName: string
+  server: string
+  /** e.g. connected | connecting | failed | waiting-credentials. */
+  status: string
+  configured: boolean
 }
 
 export interface InstalledSkill {
@@ -80,7 +202,10 @@ export interface InstalledSkill {
   installedAt: string
   updatedAt: string
   skills: SkillEntrySpec[]
+  /** Inline MCP servers stored in this index (never a config reference). */
   mcpServers: McpSpec[]
+  /** MCP servers used where another agent configured them. */
+  mcpRefs?: McpRef[]
   dependencies: DependencySpec
   /** Relative log path when a dependency install wrote one. */
   log?: string

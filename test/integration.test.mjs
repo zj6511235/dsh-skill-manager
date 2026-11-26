@@ -241,6 +241,57 @@ test('host apply: fails closed when requestRejection refuses', async () => {
   }
 })
 
+test('client: the MCP tab renders without data', () => {
+  const code = readFileSync(new URL('../client.js', import.meta.url), 'utf8')
+  const loads = []
+  const sandbox = {
+    console,
+    fetch: async () => ({ ok: true, json: async () => ({}) }),
+    __ModuleLoader__: { load: options => loads.push(options) },
+  }
+  sandbox.globalThis = sandbox
+  vm.createContext(sandbox)
+  vm.runInContext(code, sandbox)
+
+  let hookIndex = 0
+  const React = {
+    createElement(type, props, ...children) {
+      return { type, props: { ...(props ?? {}), children } }
+    },
+    useState(initial) {
+      const index = hookIndex++
+      // The page's third hook is the active tab; start on "mcp".
+      if (index === 2) return ['mcp', () => {}]
+      return [initial, () => {}]
+    },
+    useEffect() {},
+    useCallback(fn) { return fn },
+    useRef(initial) { return { current: initial } },
+  }
+  function render(node) {
+    if (node === null || node === undefined || typeof node === 'boolean') return ''
+    if (typeof node === 'string' || typeof node === 'number') return String(node)
+    if (Array.isArray(node)) return node.map(render).join('')
+    if (typeof node.type === 'function') return render(node.type(node.props))
+    return render(node.props?.children)
+  }
+
+  const module = loads[0].factory(name => (name === 'react' ? React : {}))
+  const slots = []
+  module.apply({
+    slots: {
+      inject(_slot, fn) { fn() },
+      register(options, component) { slots.push({ options, component }) },
+    },
+    locale: { getSnapshot: () => ({ id: 'zh-CN' }) },
+  })
+  hookIndex = 0
+  const html = render(React.createElement(slots[0].component, {}))
+  for (const expected of ['MCP 连接器', '连接器市场', '自定义 MCP 连接器', '扫描本机其他 Agent', '还没有 MCP 连接器']) {
+    assert.ok(html.includes(expected), `MCP tab is missing ${expected}`)
+  }
+})
+
 test('client: loads once and registers the settings.section slot', () => {
   const code = readFileSync(new URL('../client.js', import.meta.url), 'utf8')
   const loads = []
@@ -298,7 +349,7 @@ test('client: loads once and registers the settings.section slot', () => {
   hookIndex = 0
   hooks = []
   const html = render(React.createElement(slots[0].component, {}))
-  for (const expected of ['对话安装技能', '你好', 'PPT 制作']) {
+  for (const expected of ['对话安装技能', '你好', 'PPT 制作', 'MCP 连接器']) {
     assert.ok(html.includes(expected), `initial render is missing ${expected}`)
   }
 })

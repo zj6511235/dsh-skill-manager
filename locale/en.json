@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Skill Store",
-    "description": "A local store for third-party skills and MCP servers: multi-source install, dependency self-heal, Web panel and CLI.",
+    "description": "A local store for third-party skills and MCP connectors: one-click connector marketplace (keys in DSH credentials), multi-source install, reference MCP servers from other agents, dependency self-heal, Web panel and CLI.",
     "detail": "docs/DETAIL.md"
   }
 }

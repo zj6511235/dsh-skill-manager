@@ -41,12 +41,25 @@ import { extractZip } from './zip.js'
 import { parsePackage, unwrapSingleRoot } from './manifest.js'
 import { runProcess, redactSecrets } from './process.js'
 import { scanExternalSkills, knownSkillRoots } from './external.js'
+import {
+  isKnownMcpFile,
+  knownMcpConfigs,
+  mcpRefKey,
+  mcpRefStoreId,
+  normalizeServerSpec,
+  resolveMcpRef,
+  scanExternalMcp,
+} from './mcp-scan.js'
 import type {
+  ExternalMcpCandidate,
   ExternalSkillCandidate,
   InstallOptions,
   InstallResult,
   InstalledSkill,
   LinkBatchResult,
+  McpPlatformScan,
+  McpRef,
+  McpSpec,
   PlatformScan,
   SourceSpec,
   StoreIndex,
@@ -799,6 +812,9 @@ export class SkillStore {
       if (entry.origin === 'external') {
         throw new SkillManagerError('invalid-source', '直接使用的技能不会改动原目录；请回到原 Agent 修复依赖')
       }
+      if (entry.skills.length === 0) {
+        throw new SkillManagerError('invalid-source', 'MCP 连接器没有需要修复的依赖')
+      }
       const dir = join(this.skillsDir, key)
       if (!existsSync(dir)) throw new SkillManagerError('not-found', '技能目录丢失，请重新安装')
       const logPath = this.logPath(key)
@@ -873,6 +889,7 @@ export class SkillStore {
     external: number
     skills: number
     mcpServers: number
+    mcp: number
     revision: number
     entries: InstalledSkill[]
   } {
@@ -888,7 +905,13 @@ export class SkillStore {
       enabled: entries.filter(entry => entry.enabled).length,
       external: references.length,
       skills: entries.reduce((sum, entry) => sum + (entry.enabled ? entry.skills.length : 0), 0),
-      mcpServers: entries.reduce((sum, entry) => sum + (entry.enabled ? entry.mcpServers.length : 0), 0),
+      mcpServers: entries.reduce(
+        (sum, entry) => sum + (entry.enabled ? entry.mcpServers.length + (entry.mcpRefs ?? []).length : 0),
+        0,
+      ),
+      // MCP connectors are counted on their own so the panel can show them even
+      // when they are referenced rather than copied.
+      mcp: entries.filter(entry => entry.mcpServers.length > 0 || (entry.mcpRefs ?? []).length > 0).length,
       revision: index.revision,
       entries,
     }
@@ -900,5 +923,260 @@ export class SkillStore {
     const target = join(this.cacheDir, `${toStoreId(name)}-${randomBytes(4).toString('hex')}${file.endsWith('.zip') ? '.zip' : '.tgz'}`)
     copyFileSync(file, target)
     return target
+  }
+
+  // ------------------------------------------------------------------- MCP --
+
+  /**
+   * Parse what a user pasted in the panel: a full config (`mcpServers` or
+   * `servers` map), one server object with a `name`, or a bare `{name, ...}`
+   * entry. Returns the normalized specs and the skipped entries.
+   */
+  parseMcpInput(input: string): { specs: McpSpec[]; warnings: string[] } {
+    const text = input.trim()
+    if (text.length === 0) throw new SkillManagerError('invalid-source', '没有可解析的 MCP 配置')
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(text)
+    } catch (error) {
+      throw new SkillManagerError('invalid-source', `MCP 配置不是合法 JSON：${errorMessage(error)}`)
+    }
+    const specs: McpSpec[] = []
+    const warnings: string[] = []
+    const add = (name: string, raw: unknown): void => {
+      const normalized = normalizeServerSpec(name, raw)
+      if (normalized.spec === undefined) {
+        if (normalized.skip === 'disabled') warnings.push(`跳过（已停用）：${name}`)
+        else warnings.push(`跳过（${normalized.reason ?? '配置无效'}）：${name}`)
+        return
+      }
+      specs.push(normalized.spec)
+    }
+    if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+      const record = parsed as Record<string, unknown>
+      const map = record.mcpServers ?? record.servers ?? record.mcp_servers ?? record.mcp
+      if (typeof map === 'object' && map !== null && !Array.isArray(map)) {
+        for (const [name, raw] of Object.entries(map as Record<string, unknown>)) add(name, raw)
+      } else if (typeof record.name === 'string' && record.name.length > 0) {
+        add(record.name, record)
+      } else {
+        throw new SkillManagerError(
+          'invalid-source',
+          '无法识别这份配置：请粘贴 {"mcpServers": {...}}、{"servers": {...}} 或带 name 的单个服务对象',
+        )
+      }
+    } else {
+      throw new SkillManagerError('invalid-source', 'MCP 配置必须是 JSON 对象')
+    }
+    if (specs.length === 0) {
+      throw new SkillManagerError('invalid-source', warnings.length > 0 ? `没有可添加的 MCP：${warnings.join('；')}` : '没有可添加的 MCP')
+    }
+    return { specs, warnings }
+  }
+
+  /** Add MCP connectors that the user supplied directly (no package copy). */
+  async installMcp(input: string, options: InstallOptions = {}): Promise<LinkBatchResult> {
+    const parsed = this.parseMcpInput(input)
+    const batch = await this.addMcpServers(parsed.specs, options, {
+      origin: options.ref ?? '手动添加',
+      agent: undefined,
+    })
+    return { entries: batch.entries, warnings: [...parsed.warnings, ...batch.warnings] }
+  }
+
+  /**
+   * Insert inline MCP servers as their own store entries. Each connector is one
+   * entry so it can be enabled, disabled and removed on its own — exactly like
+   * a skill, which is what the panel offers.
+   */
+  async addMcpServers(
+    specs: readonly McpSpec[],
+    options: InstallOptions = {},
+    provenance: { origin: string; agent?: string; description?: string } = { origin: '手动添加' },
+  ): Promise<LinkBatchResult> {
+    this.ensureLayout()
+    if (specs.length === 0) throw new SkillManagerError('invalid-source', '没有选择任何 MCP 连接器')
+    const release = await this.acquireLock()
+    try {
+      const index = this.readIndex()
+      const entries: InstallResult[] = []
+      const warnings: string[] = []
+      const planned: Array<{ id: string; entry: InstalledSkill }> = []
+      const seen = new Set<string>()
+      for (const spec of specs) {
+        const id = toStoreId(`mcp-${spec.name}`)
+        if (id.length === 0) {
+          warnings.push(`跳过（无法生成 id）：${spec.name}`)
+          continue
+        }
+        if (seen.has(id)) {
+          warnings.push(`同名 MCP 重复，已跳过：${spec.name}`)
+          continue
+        }
+        seen.add(id)
+        const existing = index.skills[id]
+        if (existing !== undefined) {
+          const same = existing.origin === 'store' && existing.mcpServers.some(server => server.name === spec.name)
+          if (same) {
+            planned.push({ id, entry: { ...existing, mcpServers: [spec], updatedAt: nowIso() } })
+            continue
+          }
+          if (existing.origin === 'external') {
+            warnings.push(`跳过（${id} 是已引用的外部 MCP，先取消引用）：${spec.name}`)
+            continue
+          }
+          if (options.force !== true) {
+            warnings.push(`跳过（已存在同名条目 ${id}；使用覆盖可替换）：${spec.name}`)
+            continue
+          }
+        }
+        planned.push({
+          id,
+          entry: {
+            id,
+            name: spec.name,
+            version: '1.0.0',
+            description: provenance.description
+              ?? (spec.transport === 'streamable-http'
+                ? `MCP 连接器（HTTP）· ${spec.url ?? ''}`
+                : `MCP 连接器（stdio）· ${spec.command ?? ''}`),
+            source: spec.catalogId === undefined
+              ? { kind: 'local', value: `mcp:${spec.name}` }
+              : { kind: 'local', value: `catalog:${spec.catalogId}` },
+            dir: `mcp/${id}`,
+            origin: 'store',
+            enabled: options.enable !== false,
+            installedAt: existing?.installedAt ?? nowIso(),
+            updatedAt: nowIso(),
+            skills: [],
+            mcpServers: [spec],
+            dependencies: { node: false, python: false, pythonPackages: [] },
+            ...(provenance.agent === undefined ? {} : { provenance: { origin: provenance.origin, agent: provenance.agent } }),
+          },
+        })
+      }
+      if (planned.length === 0 && entries.length === 0) {
+        throw new SkillManagerError(
+          'invalid-source',
+          warnings.length > 0 ? `没有可添加的 MCP：${warnings.join('；')}` : '没有可添加的 MCP',
+        )
+      }
+      for (const item of planned) {
+        index.skills[item.id] = item.entry
+        entries.push({ entry: item.entry, warnings: [] })
+      }
+      if (planned.length > 0) this.writeIndex(index)
+      return { entries, warnings }
+    } finally {
+      release()
+    }
+  }
+
+  /**
+   * Reference MCP servers that live in another agent's config file.
+   *
+   * Only the location is stored. The command, URL, env and headers are re-read
+   * from that file on every registration, so editing the other agent's config
+   * takes effect here too and no secret is copied into this store.
+   */
+  async linkMcpRefs(refs: readonly McpRef[], options: InstallOptions = {}): Promise<LinkBatchResult> {
+    this.ensureLayout()
+    if (refs.length === 0) throw new SkillManagerError('invalid-source', '没有选择任何 MCP 连接器')
+    const allowed = knownMcpConfigs(this.home, this.cwd, this.env)
+    const release = await this.acquireLock()
+    try {
+      const index = this.readIndex()
+      const entries: InstallResult[] = []
+      const warnings: string[] = []
+      const planned: Array<{ id: string; entry: InstalledSkill }> = []
+      const seen = new Set<string>()
+      for (const ref of refs) {
+        // A reference may only point at a config file this plugin knows about:
+        // the route must never become a way to read an arbitrary path.
+        if (!isKnownMcpFile(ref.file, allowed)) {
+          warnings.push(`跳过（不是已知的 MCP 配置文件）：${ref.file}`)
+          continue
+        }
+        const spec = resolveMcpRef(ref)
+        if (spec === undefined) {
+          warnings.push(`跳过（配置里已找不到 ${ref.name}）：${ref.file}`)
+          continue
+        }
+        const id = mcpRefStoreId(ref.agent, ref.name, ref.scope)
+        if (seen.has(id)) {
+          warnings.push(`同名 MCP 重复，已跳过：${ref.name}`)
+          continue
+        }
+        seen.add(id)
+        const existing = index.skills[id]
+        const same = existing !== undefined
+          && existing.origin === 'external'
+          && (existing.mcpRefs ?? []).some(item => mcpRefKey(item.agent, item.file, item.scope, item.name) === mcpRefKey(ref.agent, ref.file, ref.scope, ref.name))
+        if (same) {
+          entries.push({ entry: existing, warnings: [] })
+          continue
+        }
+        if (existing !== undefined && options.force !== true) {
+          warnings.push(`跳过（${id} 已被占用；使用覆盖可替换）：${ref.name}`)
+          continue
+        }
+        planned.push({
+          id,
+          entry: {
+            id,
+            name: ref.name,
+            version: '1.0.0',
+            description: `MCP 连接器 · 引用 ${ref.agentLabel}`,
+            source: { kind: 'external', value: ref.file },
+            dir: `external:${ref.file}`,
+            origin: 'external',
+            externalPath: ref.file,
+            enabled: options.enable !== false,
+            installedAt: existing?.installedAt ?? nowIso(),
+            updatedAt: nowIso(),
+            skills: [],
+            mcpServers: [],
+            mcpRefs: [ref],
+            dependencies: { node: false, python: false, pythonPackages: [] },
+            provenance: { origin: ref.file, agent: ref.agent },
+          },
+        })
+      }
+      if (planned.length === 0 && entries.length === 0) {
+        throw new SkillManagerError(
+          'invalid-source',
+          warnings.length > 0 ? `没有可引用的 MCP：${warnings.join('；')}` : '没有可引用的 MCP',
+        )
+      }
+      for (const item of planned) {
+        index.skills[item.id] = item.entry
+        entries.push({ entry: item.entry, warnings: [] })
+      }
+      if (planned.length > 0) this.writeIndex(index)
+      return { entries, warnings }
+    } finally {
+      release()
+    }
+  }
+
+  /** Every entry that contributes at least one MCP connector. */
+  mcpEntries(): InstalledSkill[] {
+    return this.list().filter(entry => entry.mcpServers.length > 0 || (entry.mcpRefs ?? []).length > 0)
+  }
+
+  /** MCP reference candidates found in other agents' config files. */
+  scanMcpReport(): { candidates: ExternalMcpCandidate[]; platforms: McpPlatformScan[] } {
+    const entries = this.list()
+    const linkedByRef = new Map<string, string>()
+    for (const entry of entries) {
+      for (const ref of entry.mcpRefs ?? []) linkedByRef.set(mcpRefKey(ref.agent, ref.file, ref.scope, ref.name), entry.id)
+    }
+    return scanExternalMcp({
+      home: this.home,
+      cwd: this.cwd,
+      env: this.env,
+      localNames: new Set(entries.map(entry => entry.name)),
+      linkedByRef,
+    })
   }
 }

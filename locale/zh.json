@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "技能商店",
-    "description": "第三方 Skill 与 MCP 服务的本地商店：多源安装、依赖自愈、Web 面板与 CLI。",
+    "description": "第三方 Skill 与 MCP 连接器的本地商店：连接器市场一键连接（密钥存 DSH 凭据）、多源安装、引用其他 Agent 的 MCP、依赖自愈、Web 面板与 CLI。",
     "detail": "docs/DETAIL.md"
   }
 }

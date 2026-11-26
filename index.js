@@ -53,7 +53,10 @@ export function apply(ctx, config = {}) {
     const store = new SkillStore({ dir: config.storeDir, cwd: process.cwd() });
     const registry = new RegistrationController(ctx, store);
     const version = readVersion();
-    const api = createApi({ store, registry, version });
+    // Attached lazily: a profile without a credentials provider can still show
+    // the marketplace, it just cannot store a connector token.
+    let credentials = undefined;
+    const api = createApi({ store, registry, version, credentials: () => credentials });
     const rejected = makeRejection(ctx);
     const effect = ctx.effect;
     // The route handler is registered through ctx.effect so unloading the
@@ -108,6 +111,9 @@ export function apply(ctx, config = {}) {
         if (typeof injectService === 'function') {
             injectService.call(ctx, ['skills'], (c) => registry.attachSkills(c.skills));
             injectService.call(ctx, ['mcpManager'], (c) => registry.attachMcp(c.mcpManager));
+            injectService.call(ctx, ['credentials'], (c) => {
+                credentials = c.credentials;
+            });
         }
         else {
             const skills = typeof ctx.get === 'function'
@@ -116,10 +122,15 @@ export function apply(ctx, config = {}) {
             const mcp = typeof ctx.get === 'function'
                 ? ctx.get.call(ctx, 'mcpManager')
                 : ctx.mcpManager;
+            const creds = typeof ctx.get === 'function'
+                ? ctx.get.call(ctx, 'credentials')
+                : ctx.credentials;
             if (skills !== undefined)
                 registry.attachSkills(skills);
             if (mcp !== undefined)
                 registry.attachMcp(mcp);
+            if (creds !== undefined)
+                credentials = creds;
         }
     }
     catch (error) {

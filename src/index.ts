@@ -6,7 +6,7 @@
  * that makes CLI changes live without a page reload.
  */
 import { readFileSync } from 'node:fs'
-import { createApi, type ApiHandler } from './host-api.js'
+import { createApi, type ApiHandler, type CredentialService } from './host-api.js'
 import { RegistrationController } from './lib/registry.js'
 import { SkillStore } from './lib/store.js'
 
@@ -63,7 +63,10 @@ export function apply(ctx: Record<string, unknown>, config: Config = {}): void {
   const store = new SkillStore({ dir: config.storeDir, cwd: process.cwd() })
   const registry = new RegistrationController(ctx, store)
   const version = readVersion()
-  const api: ApiHandler = createApi({ store, registry, version })
+  // Attached lazily: a profile without a credentials provider can still show
+  // the marketplace, it just cannot store a connector token.
+  let credentials: CredentialService | undefined = undefined
+  const api: ApiHandler = createApi({ store, registry, version, credentials: () => credentials })
   const rejected = makeRejection(ctx)
   const effect = ctx.effect as (this: unknown, fn: () => () => void) => void
 
@@ -122,6 +125,9 @@ export function apply(ctx: Record<string, unknown>, config: Config = {}): void {
     if (typeof injectService === 'function') {
       injectService.call(ctx, ['skills'], (c) => registry.attachSkills(c.skills as never))
       injectService.call(ctx, ['mcpManager'], (c) => registry.attachMcp(c.mcpManager as never))
+      injectService.call(ctx, ['credentials'], (c) => {
+        credentials = c.credentials as CredentialService | undefined
+      })
     } else {
       const skills = typeof ctx.get === 'function'
         ? (ctx.get as (this: unknown, n: string) => unknown).call(ctx, 'skills')
@@ -129,8 +135,12 @@ export function apply(ctx: Record<string, unknown>, config: Config = {}): void {
       const mcp = typeof ctx.get === 'function'
         ? (ctx.get as (this: unknown, n: string) => unknown).call(ctx, 'mcpManager')
         : ctx.mcpManager
+      const creds = typeof ctx.get === 'function'
+        ? (ctx.get as (this: unknown, n: string) => unknown).call(ctx, 'credentials')
+        : ctx.credentials
       if (skills !== undefined) registry.attachSkills(skills as never)
       if (mcp !== undefined) registry.attachMcp(mcp as never)
+      if (creds !== undefined) credentials = creds as CredentialService
     }
   } catch (error) {
     console.warn('[dsh-skill-manager] optional services unavailable:', (error as Error).message)

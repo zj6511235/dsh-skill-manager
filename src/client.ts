@@ -176,6 +176,58 @@
         warningsTitle: '注册提醒',
         permissionHint: '安装第三方技能等于在本机运行它的依赖安装脚本；只安装你信任的来源。',
         allowScripts: '允许依赖安装脚本',
+        tabMcp: 'MCP 连接器',
+        mcpIntro: '像管理技能一样管理 MCP 连接器：可以自己粘贴配置添加，也可以扫描本机其他 Agent（Claude、Cursor、Codex、Gemini…）已配置的 MCP 并「引用」过来。引用只保存位置，不复制任何密钥；对方的配置改了，这里会自动跟上。',
+        mcpEmpty: '还没有 MCP 连接器。可以扫描本机其他 Agent，或在下面粘贴一份配置。',
+        mcpAddTitle: '添加 MCP 连接器',
+        mcpAddPlaceholder: '{ "mcpServers": { "github": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-github"], "env": { "GITHUB_TOKEN": "${credential:GITHUB_TOKEN}" } } } }',
+        mcpAddHint: '支持 {"mcpServers": {...}}、{"servers": {...}}（VS Code）或带 name 的单个服务对象；env / headers 里的密钥可以用 ${credential:名字} 交给 DSH 凭据管理。',
+        mcpAdd: '添加连接器',
+        mcpAddBusy: '正在添加…',
+        mcpScan: '扫描本机其他 Agent',
+        mcpScanning: '正在扫描…',
+        mcpPlatformsTitle: '发现 MCP 的 Agent',
+        mcpNoCandidates: '没有在本机其他 Agent 的配置里发现 MCP。可以手动粘贴配置添加。',
+        mcpSelected: '已选 {count} 个',
+        mcpLink: '引用选中（{count}）',
+        mcpLinking: '正在引用…',
+        mcpUnlinkSelected: '取消引用选中（{count}）',
+        mcpBadgeRef: '引用 · 不复制',
+        mcpBadgeLocal: '本库',
+        mcpStatus: '连接状态',
+        mcpProbe: '测试连接',
+        mcpProbing: '正在测试…',
+        mcpProbeOk: '{name} 连接成功',
+        mcpProbeFail: '{name} 连接失败：{error}',
+        mcpNoticeAdded: '已添加 MCP 连接器 {name}',
+        mcpNoticeLinked: '已引用 MCP {name}',
+        mcpNoticeLinkedMany: '已引用 {count} 个 MCP 连接器',
+        mcpEnvKeys: '凭据字段',
+        mcpSecretsNote: '扫描结果不会显示任何密钥值，只显示字段名；引用后由 DSH 在连接时从原配置读取。',
+        mcpInvalid: '无法引用',
+        catalogTitle: '连接器市场',
+        catalogIntro: '点「连接」就能用的现成连接器。填一次密钥即可，密钥存进 DSH 凭据库，不会写进技能库文件；移除连接器时会一并删除。也可以接入下面「自定义连接器」或引用本机其他 Agent 已配置的 MCP。',
+        catalogSearch: '搜索连接器',
+        catalogAll: '全部',
+        catalogConnect: '连接',
+        catalogConnected: '已连接',
+        catalogEnabled: '运行中',
+        catalogDisabled: '已停用',
+        catalogReconfigure: '重新填写密钥',
+        catalogInstallBusy: '正在连接…',
+        catalogNeedFields: '请先填写：{fields}',
+        catalogCredentialMissing: '当前 profile 没有凭据服务，密钥无法安全保存。请在 DSH 设置里启用凭据，或改用「自定义连接器」手动填写。',
+        catalogNoticeInstalled: '已连接 {name}',
+        catalogNoMatch: '没有匹配的连接器。',
+        catalogDocs: '文档',
+        catalogSecretNote: '密钥只写入 DSH 凭据库；连接器条目里保存的是引用名。',
+        catalogCategoryEfficiency: '效率办公',
+        catalogCategoryDeveloper: '开发工具',
+        catalogCategorySearch: '搜索地图',
+        catalogCategoryData: '数据与文件',
+        catalogCategoryChina: '国内服务',
+        catalogCategoryDemo: '示例调试',
+        mcpCustomTitle: '自定义 MCP 连接器',
         errorPrefix: '操作失败：',
         hostReloadHint: '（若仍看到旧错误，请重启一次 DeepSeek Harness，让新的批量引用逻辑生效）',
       },
@@ -305,6 +357,58 @@
         warningsTitle: 'Registration warnings',
         permissionHint: 'Installing a third-party skill means running its dependency installer on this machine. Only install sources you trust.',
         allowScripts: 'Allow dependency install scripts',
+        tabMcp: 'MCP connectors',
+        mcpIntro: 'Manage MCP connectors like skills: paste a config to add one, or scan the MCP servers other agents on this computer already configured (Claude, Cursor, Codex, Gemini…) and reference them. A reference stores only the location — no secret is copied — and follows changes made by that agent.',
+        mcpEmpty: 'No MCP connector yet. Scan the other agents on this computer, or paste a config below.',
+        mcpAddTitle: 'Add an MCP connector',
+        mcpAddPlaceholder: '{ "mcpServers": { "github": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-github"], "env": { "GITHUB_TOKEN": "${credential:GITHUB_TOKEN}" } } } }',
+        mcpAddHint: 'Accepts {"mcpServers": {...}}, {"servers": {...}} (VS Code) or a single named server object. Keep secrets in DSH credentials with ${credential:NAME}.',
+        mcpAdd: 'Add connector',
+        mcpAddBusy: 'Adding…',
+        mcpScan: 'Scan other agents',
+        mcpScanning: 'Scanning…',
+        mcpPlatformsTitle: 'Agents with MCP config',
+        mcpNoCandidates: 'No MCP server was found in other agents\u2019 configs. Paste a config to add one manually.',
+        mcpSelected: '{count} selected',
+        mcpLink: 'Reference selected ({count})',
+        mcpLinking: 'Referencing…',
+        mcpUnlinkSelected: 'Unreference selected ({count})',
+        mcpBadgeRef: 'Referenced · not copied',
+        mcpBadgeLocal: 'Local',
+        mcpStatus: 'Connection',
+        mcpProbe: 'Test connection',
+        mcpProbing: 'Testing…',
+        mcpProbeOk: '{name} connected',
+        mcpProbeFail: '{name} failed: {error}',
+        mcpNoticeAdded: 'Added MCP connector {name}',
+        mcpNoticeLinked: 'Referenced MCP {name}',
+        mcpNoticeLinkedMany: 'Referenced {count} MCP connectors',
+        mcpEnvKeys: 'Credential fields',
+        mcpSecretsNote: 'Scan results never show a secret value — only the field names. Once referenced, DSH reads the values from the original config when connecting.',
+        mcpInvalid: 'unsupported',
+        catalogTitle: 'Connector marketplace',
+        catalogIntro: 'Ready-made connectors that work with one click. Enter a key once: it is stored in DSH credentials, never in the store files, and removed together with the connector. Custom connectors and MCP servers already configured by other agents are available below.',
+        catalogSearch: 'Search connectors',
+        catalogAll: 'All',
+        catalogConnect: 'Connect',
+        catalogConnected: 'Connected',
+        catalogEnabled: 'live',
+        catalogDisabled: 'disabled',
+        catalogReconfigure: 'Update key',
+        catalogInstallBusy: 'Connecting…',
+        catalogNeedFields: 'Fill in first: {fields}',
+        catalogCredentialMissing: 'This profile has no credentials provider, so a key cannot be stored safely. Enable credentials in DSH settings, or use a custom connector.',
+        catalogNoticeInstalled: 'Connected {name}',
+        catalogNoMatch: 'No connector matches.',
+        catalogDocs: 'Docs',
+        catalogSecretNote: 'Keys go to DSH credentials only; the connector entry stores a reference name.',
+        catalogCategoryEfficiency: 'Work',
+        catalogCategoryDeveloper: 'Developer',
+        catalogCategorySearch: 'Search & maps',
+        catalogCategoryData: 'Data & files',
+        catalogCategoryChina: 'China services',
+        catalogCategoryDemo: 'Examples',
+        mcpCustomTitle: 'Custom MCP connector',
         errorPrefix: 'Action failed: ',
         hostReloadHint: ' (If the old error persists, restart DeepSeek Harness once so the new batch logic loads.)',
       },
@@ -330,17 +434,67 @@
       source: { kind: string; value: string }
       origin?: 'store' | 'external'
       externalPath?: string
+      kind?: 'skill' | 'mcp'
       skills: Array<{ name: string; description: string }>
-      mcpServers: Array<{ name: string; transport: string }>
+      mcpServers: Array<{ name: string; transport: string; summary?: string; envKeys?: string[] }>
+      mcpRefs?: Array<{ name: string; agent: string; agentLabel: string; file: string; scope?: string }>
       dependencies: { node: boolean; python: boolean }
       provenance?: { agent?: string; origin?: string }
     }
     interface StatusView {
       ok: boolean
       version: string
-      store: { dir: string; count: number; enabled: number; external: number; skills: number; mcpServers: number; revision: number }
-      capabilities: { skills: boolean; mcp: boolean }
+      store: { dir: string; count: number; enabled: number; external: number; skills: number; mcpServers: number; mcp?: number; revision: number }
+      capabilities: { skills: boolean; mcp: boolean; probe?: boolean }
       warnings: string[]
+    }
+    interface McpCandidate {
+      key: string
+      name: string
+      agent: string
+      agentLabel: string
+      file: string
+      scope?: string
+      transport: string
+      summary: string
+      envKeys: string[]
+      linked: boolean
+      linkedId?: string
+      invalid?: boolean
+      invalidReason?: string
+    }
+    interface McpServerRow {
+      registeredAs: string
+      entryId: string
+      entryName: string
+      server: string
+      status: string
+      configured: boolean
+    }
+    interface CatalogField {
+      key: string
+      label: string
+      hint?: string
+      placeholder?: string
+      secret?: boolean
+      required?: boolean
+    }
+    interface CatalogItem {
+      id: string
+      name: string
+      vendor: string
+      category: 'efficiency' | 'developer' | 'search' | 'data' | 'china' | 'demo'
+      description: string
+      icon: string
+      docs: string
+      transport: string
+      url?: string
+      fields: CatalogField[]
+      credentialRefs: string[]
+      installed: boolean
+      entryId?: string
+      enabled?: boolean
+      credentialReady: boolean
     }
     interface SearchItem {
       slug: string
@@ -973,11 +1127,471 @@
       )
     }
 
+    function statusTone(status: string): 'ok' | 'warn' | 'muted' | 'error' {
+      if (/connect|ready|running|ok\b/i.test(status)) return 'ok'
+      if (/fail|error|crash|closed/i.test(status)) return 'error'
+      if (/unavailable|disabled|unknown|stopped/i.test(status)) return 'muted'
+      return 'warn'
+    }
+
+    /**
+     * The connector marketplace: a card per ready-made MCP connector. A card
+     * with fields opens a small form; the value goes straight to the Host,
+     * which stores it as a DSH credential and installs the connector.
+     */
+    function MarketPanel(props: {
+      copy: Copy
+      items: CatalogItem[]
+      busy: string
+      credentialsAvailable: boolean
+      onConnect: (item: CatalogItem, values: Record<string, string>) => Promise<void> | void
+      onRefresh: () => void
+    }): unknown {
+      const { copy } = props
+      const [query, setQuery] = useState('')
+      const [category, setCategory] = useState<'all' | CatalogItem['category']>('all')
+      const [dialog, setDialog] = useState<CatalogItem | undefined>(undefined)
+      const [values, setValues] = useState<Record<string, string>>({})
+      const [formError, setFormError] = useState('')
+
+      const categories: Array<{ key: 'all' | CatalogItem['category']; label: string }> = [
+        { key: 'all', label: copy.catalogAll },
+        { key: 'efficiency', label: copy.catalogCategoryEfficiency },
+        { key: 'developer', label: copy.catalogCategoryDeveloper },
+        { key: 'search', label: copy.catalogCategorySearch },
+        { key: 'data', label: copy.catalogCategoryData },
+        { key: 'china', label: copy.catalogCategoryChina },
+        { key: 'demo', label: copy.catalogCategoryDemo },
+      ]
+      const needle = query.trim().toLowerCase()
+      const visible = props.items.filter((item) => {
+        if (category !== 'all' && item.category !== category) return false
+        if (needle.length === 0) return true
+        return `${item.name} ${item.vendor} ${item.description}`.toLowerCase().includes(needle)
+      })
+
+      const openDialog = (item: CatalogItem): void => {
+        setFormError('')
+        setValues({})
+        setDialog(item)
+      }
+      const submit = (): void => {
+        if (dialog === undefined) return
+        const missing = dialog.fields.filter(field => field.required === true && (values[field.key] ?? '').trim().length === 0)
+        if (missing.length > 0) {
+          setFormError(fill(copy.catalogNeedFields, { fields: missing.map(field => field.label).join(' / ') }))
+          return
+        }
+        setFormError('')
+        const result = props.onConnect(dialog, values)
+        if (result !== undefined) {
+          void result.then(() => {
+            setDialog(undefined)
+            setValues({})
+          })
+        } else {
+          setDialog(undefined)
+          setValues({})
+        }
+      }
+
+      return h('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } },
+        h('div', { style: S.card },
+          h('div', { style: S.row },
+            h('span', { style: { fontSize: '13px', fontWeight: 600 } }, copy.catalogTitle),
+            h(Badge, { tone: 'ok' }, String(props.items.filter(item => !item.installed).length)),
+            h('span', { style: { flex: 1 } }),
+            h('button', { type: 'button', style: S.button(false, false), onClick: props.onRefresh }, copy.refresh),
+          ),
+          h('p', { style: { ...S.dim, margin: 0 } }, copy.catalogIntro),
+          h('div', { style: { ...S.row, marginTop: '6px' } },
+            h('input', {
+              style: { ...S.input, flex: 1, minWidth: '200px' },
+              value: query,
+              placeholder: copy.catalogSearch,
+              'aria-label': copy.catalogSearch,
+              onChange: (event: { target: { value: string } }) => setQuery(event.target.value),
+            }),
+          ),
+          h('div', { style: { ...S.row, flexWrap: 'wrap' } },
+            ...categories.map(entry => h('button', {
+              key: entry.key,
+              type: 'button',
+              style: S.tab(category === entry.key),
+              onClick: () => setCategory(entry.key),
+            }, entry.label)),
+          ),
+          visible.length === 0 && props.items.length > 0 ? h('p', { style: S.dim }, copy.catalogNoMatch) : null,
+          h('div', { style: { display: 'flex', flexWrap: 'wrap', gap: '10px' } },
+            ...visible.map(item => h('div', {
+              key: item.id,
+              style: {
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '6px',
+                width: '268px',
+                flex: '1 1 268px',
+                maxWidth: '420px',
+                padding: '10px',
+                borderRadius: '10px',
+                border: '0.5px solid var(--dsw-alias-border-l3)',
+                background: 'var(--dsw-alias-bg-l1)',
+              },
+            },
+              h('div', { style: { ...S.row, alignItems: 'center' } },
+                h('span', {
+                  style: {
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '34px',
+                    height: '34px',
+                    borderRadius: '9px',
+                    fontSize: '18px',
+                    background: 'var(--dsw-alias-bg-l2)',
+                    border: '0.5px solid var(--dsw-alias-border-l3)',
+                  },
+                }, item.icon),
+                h('div', { style: { display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 } },
+                  h('span', { style: { fontSize: '13px', fontWeight: 600 } }, item.name),
+                  h('span', { style: S.meta }, `${item.vendor} · ${item.transport === 'stdio' ? 'stdio' : 'HTTP'}`),
+                ),
+                item.installed ? h(Badge, { tone: item.enabled === false ? 'muted' : 'ok' }, item.enabled === false ? copy.catalogDisabled : copy.catalogEnabled) : null,
+              ),
+              h('span', { style: { ...S.dim, minHeight: '32px' } }, item.description),
+              h('div', { style: S.row },
+                h('a', {
+                  href: item.docs,
+                  target: '_blank',
+                  rel: 'noreferrer',
+                  style: { fontSize: '12px', color: 'var(--dsw-alias-label-secondary)' },
+                }, copy.catalogDocs),
+                h('span', { style: { flex: 1 } }),
+                item.installed
+                  ? h('button', {
+                    type: 'button',
+                    style: S.button(false, props.busy === item.id),
+                    disabled: props.busy === item.id,
+                    onClick: () => openDialog(item),
+                  }, props.busy === item.id ? copy.catalogInstallBusy : copy.catalogReconfigure)
+                  : h('button', {
+                    type: 'button',
+                    style: S.button(true, props.busy === item.id),
+                    disabled: props.busy === item.id,
+                    onClick: () => (item.fields.length === 0 ? props.onConnect(item, {}) : openDialog(item)),
+                  }, props.busy === item.id ? copy.catalogInstallBusy : copy.catalogConnect),
+              ),
+            )),
+          ),
+          h('p', { style: { ...S.dim, margin: 0 } }, copy.catalogSecretNote),
+        ),
+
+        dialog === undefined ? null : h('div', {
+          style: {
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.38)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          },
+          onClick: () => setDialog(undefined),
+        },
+          h('div', {
+            style: {
+              ...S.card,
+              width: '440px',
+              maxWidth: '92vw',
+              maxHeight: '86vh',
+              overflow: 'auto',
+              background: 'var(--dsw-alias-bg-l1)',
+            },
+            onClick: (event: { stopPropagation: () => void }) => event.stopPropagation(),
+          },
+            h('div', { style: S.row },
+              h('span', { style: { fontSize: '15px' } }, dialog.icon),
+              h('span', { style: { fontSize: '14px', fontWeight: 600 } }, dialog.name),
+              h('span', { style: S.meta }, dialog.vendor),
+              h('span', { style: { flex: 1 } }),
+              h('button', { type: 'button', style: S.button(false, false), onClick: () => setDialog(undefined) }, copy.close),
+            ),
+            h('p', { style: S.dim }, dialog.description),
+            props.credentialsAvailable
+              ? null
+              : h('p', { style: S.notice('error') }, copy.catalogCredentialMissing),
+            ...dialog.fields.map(field => h('label', { key: field.key, style: { display: 'flex', flexDirection: 'column', gap: '4px' } },
+              h('span', { style: { fontSize: '12px', fontWeight: 600 } }, `${field.label}${field.required === true ? ' *' : ''}`),
+              h('input', {
+                style: S.input,
+                type: field.secret === true ? 'password' : 'text',
+                autoComplete: 'off',
+                value: values[field.key] ?? '',
+                placeholder: field.placeholder ?? '',
+                'aria-label': field.label,
+                onChange: (event: { target: { value: string } }) => setValues(previous => ({ ...previous, [field.key]: event.target.value })),
+              }),
+              field.hint === undefined ? null : h('span', { style: S.dim }, field.hint),
+            )),
+            dialog.fields.length === 0 ? h('p', { style: S.dim }, copy.mcpSecretsNote) : null,
+            formError.length === 0 ? null : h('p', { style: S.notice('error') }, formError),
+            h('div', { style: S.row },
+              h('span', { style: { flex: 1 } }),
+              h('button', { type: 'button', style: S.button(false, false), onClick: () => setDialog(undefined) }, copy.cancel),
+              h('button', {
+                type: 'button',
+                style: S.button(true, props.busy === dialog.id),
+                disabled: props.busy === dialog.id || !props.credentialsAvailable,
+                onClick: submit,
+              }, props.busy === dialog.id ? copy.catalogInstallBusy : copy.catalogConnect),
+            ),
+          ),
+        ),
+      )
+    }
+
+    /**
+     * MCP connectors: the same enable/disable/remove ergonomics as skills, plus
+     * what only MCP needs — pasting a config, referencing another agent's
+     * config, live connection status and a connection test.
+     */
+    function McpPanel(props: {
+      copy: Copy
+      entries: EntryView[]
+      servers: McpServerRow[]
+      candidates: McpCandidate[]
+      platforms: Platform[]
+      busy: string
+      selected: string[]
+      jsonText: string
+      setJsonText: (value: string) => void
+      probeBusy: string
+      canProbe: boolean
+      catalog: CatalogItem[]
+      catalogBusy: string
+      credentialsAvailable: boolean
+      onScan: () => void
+      onAdd: () => void
+      onToggle: (entry: EntryView) => void
+      onRemove: (entry: EntryView) => void
+      onProbe: (entry: EntryView, server: string) => void
+      onSelect: (key: string) => void
+      onSelectGroup: (rows: McpCandidate[], select: boolean) => void
+      onLink: (keys: string[]) => void
+      onUnlink: (ids: string[]) => void
+      onConnect: (item: CatalogItem, values: Record<string, string>) => void
+      onRefreshCatalog: () => void
+    }): unknown {
+      const { copy } = props
+      const [expanded, setExpanded] = useState<string[]>([])
+      const statusOf = (entryId: string, server: string): McpServerRow | undefined =>
+        props.servers.find(row => row.entryId === entryId && row.server === server)
+      const groups = new Map<string, McpCandidate[]>()
+      for (const platform of props.platforms) groups.set(platform.label, [])
+      for (const candidate of props.candidates) {
+        const list = groups.get(candidate.agentLabel) ?? []
+        list.push(candidate)
+        groups.set(candidate.agentLabel, list)
+      }
+      const selectedCandidates = props.candidates.filter(candidate => props.selected.includes(candidate.key))
+      const linkable = selectedCandidates.filter(candidate => !candidate.linked)
+      const linkedSelected = selectedCandidates.filter(candidate => candidate.linked && candidate.linkedId !== undefined)
+      const batchBusy = props.busy === 'link'
+      return h('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px' } },
+        h(MarketPanel, {
+          copy: props.copy,
+          items: props.catalog,
+          busy: props.catalogBusy,
+          credentialsAvailable: props.credentialsAvailable,
+          onConnect: props.onConnect,
+          onRefresh: props.onRefreshCatalog,
+        }),
+        h('p', { style: S.dim }, copy.mcpIntro),
+
+        // Current connectors.
+        h('div', { style: S.card },
+          h('div', { style: S.row },
+            h('span', { style: { fontSize: '13px', fontWeight: 600 } }, copy.tabMcp),
+            h(Badge, { tone: props.entries.length > 0 ? 'ok' : 'muted' }, String(props.entries.length)),
+            h('span', { style: { flex: 1 } }),
+            h('button', { type: 'button', style: S.button(false, props.busy === 'scan'), disabled: props.busy === 'scan', onClick: props.onScan },
+              props.busy === 'scan' ? copy.mcpScanning : copy.mcpScan),
+          ),
+          props.entries.length === 0 ? h('p', { style: S.dim }, copy.mcpEmpty) : null,
+          ...props.entries.map(entry => h('div', {
+            key: entry.id,
+            style: { display: 'flex', flexDirection: 'column', gap: '6px', padding: '8px 0', borderTop: '0.5px solid var(--dsw-alias-border-l3)' },
+          },
+            h('div', { style: S.row },
+              h('span', { style: { fontSize: '13px', fontWeight: 600 } }, entry.name),
+              entry.origin === 'external'
+                ? h(Badge, { tone: 'warn' }, copy.mcpBadgeRef)
+                : h(Badge, { tone: 'muted' }, copy.mcpBadgeLocal),
+              ...(entry.mcpRefs ?? []).map(ref => h(Badge, { key: ref.agent, tone: 'muted' }, ref.agentLabel)),
+              h('span', { style: { flex: 1 } }),
+              h('button', {
+                type: 'button',
+                style: S.switch(entry.enabled),
+                title: entry.enabled ? copy.disable : copy.enable,
+                'aria-label': entry.enabled ? copy.disable : copy.enable,
+                disabled: props.busy === entry.id,
+                onClick: () => props.onToggle(entry),
+              }, h('span', { style: S.knob(entry.enabled) })),
+            ),
+            ...entry.mcpServers.map((server) => {
+              const row = statusOf(entry.id, server.name)
+              return h('div', { key: `s-${server.name}`, style: { ...S.row, alignItems: 'flex-start' } },
+                h('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0 } },
+                  h('div', { style: S.row },
+                    h('span', { style: { fontSize: '12px', fontWeight: 600 } }, server.name),
+                    h(Badge, null, server.transport),
+                    row === undefined ? null : h(Badge, { tone: statusTone(row.status) }, row.status),
+                    (server.envKeys ?? []).length > 0
+                      ? h('span', { style: S.meta }, `${copy.mcpEnvKeys}: ${(server.envKeys ?? []).join(', ')}`)
+                      : null,
+                  ),
+                  h('span', { style: S.mono }, server.summary ?? ''),
+                ),
+                h('button', {
+                  type: 'button',
+                  style: S.button(false, props.probeBusy === `${entry.id}/${server.name}` || !props.canProbe),
+                  disabled: props.probeBusy === `${entry.id}/${server.name}` || !props.canProbe,
+                  onClick: () => props.onProbe(entry, server.name),
+                }, props.probeBusy === `${entry.id}/${server.name}` ? copy.mcpProbing : copy.mcpProbe),
+              )
+            }),
+            ...(entry.mcpRefs ?? []).map((ref) => {
+              const row = statusOf(entry.id, ref.name)
+              return h('div', { key: `r-${ref.name}`, style: { ...S.row, alignItems: 'flex-start' } },
+                h('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0 } },
+                  h('div', { style: S.row },
+                    h('span', { style: { fontSize: '12px', fontWeight: 600 } }, ref.name),
+                    row === undefined ? null : h(Badge, { tone: statusTone(row.status) }, row.status),
+                  ),
+                  h('span', { style: S.mono }, ref.file),
+                ),
+                h('button', {
+                  type: 'button',
+                  style: S.button(false, props.probeBusy === `${entry.id}/${ref.name}` || !props.canProbe),
+                  disabled: props.probeBusy === `${entry.id}/${ref.name}` || !props.canProbe,
+                  onClick: () => props.onProbe(entry, ref.name),
+                }, props.probeBusy === `${entry.id}/${ref.name}` ? copy.mcpProbing : copy.mcpProbe),
+              )
+            }),
+            h('div', { style: S.row },
+              h('span', { style: { flex: 1 } }),
+              h('button', { type: 'button', style: S.button(false, props.busy === entry.id), onClick: () => props.onRemove(entry) },
+                props.busy === entry.id ? copy.confirmRemove : (entry.origin === 'external' ? copy.unlink : copy.remove)),
+            ),
+          )),
+        ),
+
+        // Manual add.
+        h('div', { style: S.card },
+          h('span', { style: { fontSize: '13px', fontWeight: 600 } }, copy.mcpCustomTitle),
+          h('textarea', {
+            style: { ...S.input, minHeight: '110px', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', resize: 'vertical' as const },
+            value: props.jsonText,
+            placeholder: copy.mcpAddPlaceholder,
+            'aria-label': copy.mcpAddTitle,
+            onChange: (event: { target: { value: string } }) => props.setJsonText(event.target.value),
+          }),
+          h('div', { style: S.row },
+            h('span', { style: { flex: 1 } }),
+            h('button', {
+              type: 'button',
+              style: S.button(true, props.busy === 'add' || props.jsonText.trim().length === 0),
+              disabled: props.busy === 'add' || props.jsonText.trim().length === 0,
+              onClick: props.onAdd,
+            }, props.busy === 'add' ? copy.mcpAddBusy : copy.mcpAdd),
+          ),
+          h('p', { style: S.dim }, copy.mcpAddHint),
+        ),
+
+        // Scan other agents.
+        h('div', { style: S.card },
+          h('div', { style: S.row },
+            h('span', { style: { fontSize: '13px', fontWeight: 600 } }, copy.mcpPlatformsTitle),
+            h('span', { style: { flex: 1 } }),
+            h('span', { style: S.meta }, fill(copy.mcpSelected, { count: String(selectedCandidates.length) })),
+            h('button', {
+              type: 'button',
+              style: S.button(true, batchBusy || linkable.length === 0),
+              disabled: batchBusy || linkable.length === 0,
+              onClick: () => props.onLink(linkable.map(candidate => candidate.key)),
+            }, batchBusy ? copy.mcpLinking : fill(copy.mcpLink, { count: String(linkable.length) })),
+            h('button', {
+              type: 'button',
+              style: S.button(false, batchBusy || linkedSelected.length === 0),
+              disabled: batchBusy || linkedSelected.length === 0,
+              onClick: () => props.onUnlink(linkedSelected.map(candidate => candidate.linkedId as string)),
+            }, fill(copy.mcpUnlinkSelected, { count: String(linkedSelected.length) })),
+          ),
+          props.platforms.length > 0
+            ? h('div', { style: S.row },
+              ...props.platforms.map(platform => h(Badge, { key: platform.agent, tone: 'ok' }, `${platform.label} · ${platform.count}`)))
+            : (props.busy === 'scan' ? null : h('p', { style: S.dim }, copy.mcpNoCandidates)),
+          h('p', { style: S.dim }, copy.mcpSecretsNote),
+          ...[...groups.entries()].map(([label, rows]) => {
+            const open = expanded.includes(label)
+            const selectable = rows.filter(candidate => !candidate.linked)
+            const allSelected = selectable.length > 0 && selectable.every(candidate => props.selected.includes(candidate.key))
+            return h('div', { key: label, style: { display: 'flex', flexDirection: 'column', gap: '4px', paddingTop: '4px' } },
+              h('div', { style: S.row },
+                h('span', { style: { fontSize: '12px', fontWeight: 600 } }, label),
+                h(Badge, { tone: rows.length > 0 ? 'ok' : 'muted' }, String(rows.length)),
+                h('span', { style: { flex: 1 } }),
+                h('button', {
+                  type: 'button',
+                  style: S.button(false, batchBusy || selectable.length === 0),
+                  disabled: batchBusy || selectable.length === 0,
+                  onClick: () => props.onSelectGroup(selectable, !allSelected),
+                }, allSelected ? copy.clearAll : copy.selectAll),
+                h('button', {
+                  type: 'button',
+                  style: S.button(false, rows.length === 0),
+                  disabled: rows.length === 0,
+                  onClick: () => setExpanded(previous => previous.includes(label)
+                    ? previous.filter(item => item !== label)
+                    : [...previous, label]),
+                }, open ? copy.collapse : `${copy.expand} (${String(rows.length)})`),
+              ),
+              open ? rows.map(candidate => h('div', {
+                key: candidate.key,
+                style: { ...S.row, alignItems: 'flex-start', padding: '6px 0', borderTop: '0.5px solid var(--dsw-alias-border-l3)' },
+              },
+                h('input', {
+                  type: 'checkbox',
+                  checked: props.selected.includes(candidate.key),
+                  disabled: candidate.linked || candidate.invalid === true || batchBusy,
+                  'aria-label': candidate.name,
+                  onChange: () => props.onSelect(candidate.key),
+                }),
+                h('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0 } },
+                  h('div', { style: S.row },
+                    h('span', { style: { fontSize: '13px', fontWeight: 600 } }, candidate.name),
+                    h(Badge, null, candidate.transport),
+                    candidate.linked ? h(Badge, { tone: 'ok' }, copy.linkedBadge) : null,
+                    candidate.invalid === true ? h(Badge, { tone: 'error' }, copy.mcpInvalid) : null,
+                    candidate.envKeys.length > 0
+                      ? h('span', { style: S.meta }, `${copy.mcpEnvKeys}: ${candidate.envKeys.join(', ')}`)
+                      : null,
+                  ),
+                  h('span', { style: S.mono }, candidate.summary),
+                  h('span', { style: S.mono }, `${candidate.file}${candidate.scope === undefined ? '' : ` · ${candidate.scope}`}`),
+                ),
+              )) : null,
+            )
+          }),
+        ),
+      )
+    }
+
     function SkillManagerPage(props: { ctx: unknown }): unknown {
       const copy = copyFor(detectLang(props.ctx))
       const [status, setStatus] = useState<StatusView | undefined>(undefined)
       const [entries, setEntries] = useState<EntryView[]>([])
-      const [tab, setTab] = useState<'installed' | 'queue' | 'store' | 'direct' | 'import' | 'chat'>('chat')
+      const [tab, setTab] = useState<'installed' | 'queue' | 'store' | 'direct' | 'import' | 'chat' | 'mcp'>('chat')
       const [source, setSource] = useState('')
       const [allowScripts, setAllowScripts] = useState(false)
       const [installBusy, setInstallBusy] = useState('')
@@ -1001,6 +1615,18 @@
       const [chatInstalling, setChatInstalling] = useState('')
       const [log, setLog] = useState<{ title: string; text: string } | undefined>(undefined)
       const [warning, setWarning] = useState('')
+      const [mcpEntries, setMcpEntries] = useState<EntryView[]>([])
+      const [mcpServers, setMcpServers] = useState<McpServerRow[]>([])
+      const [mcpCandidates, setMcpCandidates] = useState<McpCandidate[]>([])
+      const [mcpPlatforms, setMcpPlatforms] = useState<Platform[]>([])
+      const [mcpSelected, setMcpSelected] = useState<string[]>([])
+      const [mcpBusy, setMcpBusy] = useState('')
+      const [mcpJson, setMcpJson] = useState('')
+      const [probeBusy, setProbeBusy] = useState('')
+      const [probeText, setProbeText] = useState('')
+      const [catalog, setCatalog] = useState<CatalogItem[]>([])
+      const [catalogBusy, setCatalogBusy] = useState('')
+      const [credentialsAvailable, setCredentialsAvailable] = useState(true)
       const confirmRemove = useRef<string>('')
       const alive = useRef(true)
 
@@ -1009,6 +1635,24 @@
         if (!alive.current) return
         setStatus(statusData as unknown as StatusView)
         setEntries(Array.isArray(listData.entries) ? listData.entries as EntryView[] : [])
+      }, [])
+
+      const loadMcp = useCallback(async (): Promise<void> => {
+        const data = await api('/mcp')
+        if (!alive.current) return
+        setMcpEntries(Array.isArray(data.entries) ? data.entries as EntryView[] : [])
+        setMcpServers(Array.isArray(data.servers) ? data.servers as McpServerRow[] : [])
+        setMcpCandidates(Array.isArray(data.candidates) ? data.candidates as McpCandidate[] : [])
+        setMcpPlatforms(Array.isArray(data.platforms) ? data.platforms as Platform[] : [])
+        const capabilities = data.capabilities as StatusView['capabilities'] | undefined
+        if (capabilities !== undefined) setStatus(previous => (previous === undefined ? previous : { ...previous, capabilities }))
+      }, [])
+
+      const loadCatalog = useCallback(async (): Promise<void> => {
+        const data = await api('/catalog')
+        if (!alive.current) return
+        setCatalog(Array.isArray(data.entries) ? data.entries as CatalogItem[] : [])
+        setCredentialsAvailable(data.credentials !== false)
       }, [])
 
       useEffect(() => {
@@ -1023,6 +1667,14 @@
         if ((tab === 'import' || tab === 'direct') && candidates.length === 0 && !scanBusy) void scan()
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [tab])
+
+      useEffect(() => {
+        if (tab !== 'mcp') return
+        void Promise.all([loadMcp(), loadCatalog()]).catch((error: Error) => {
+          if (alive.current) announce(copy.errorPrefix + error.message, 'error')
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [tab, loadMcp, loadCatalog])
 
       const announce = (text: string, tone: 'ok' | 'error' = 'ok'): void => setNotice({ text, tone })
 
@@ -1054,6 +1706,7 @@
             ? fill(copy.noticeDisabled, { name: entry.name })
             : fill(copy.noticeEnabled, { name: entry.name }), tone: 'ok' })
           await reload()
+          if (entry.kind === 'mcp') await loadMcp()
         } catch (error) {
           announce(copy.errorPrefix + (error as Error).message, 'error')
         } finally {
@@ -1079,6 +1732,7 @@
             tone: 'ok',
           })
           await reload()
+          if (entry.kind === 'mcp') await loadMcp()
         } catch (error) {
           announce(copy.errorPrefix + (error as Error).message, 'error')
         } finally {
@@ -1318,9 +1972,136 @@
         }
       }
 
+      async function connectCatalog(item: CatalogItem, values: Record<string, string>): Promise<void> {
+        setCatalogBusy(item.id)
+        setWarning('')
+        try {
+          const data = await api('/catalog/install', { method: 'POST', body: { id: item.id, values } })
+          const warnings = Array.isArray(data.warnings) ? data.warnings as string[] : []
+          announce(fill(copy.catalogNoticeInstalled, { name: item.name }))
+          if (warnings.length > 0) setWarning(`${copy.installWarnings} ${warnings.join('；')}`)
+          await reload()
+          await Promise.all([loadMcp(), loadCatalog()])
+        } catch (error) {
+          announce(copy.errorPrefix + (error as Error).message, 'error')
+        } finally {
+          setCatalogBusy('')
+        }
+      }
+
+      async function refreshCatalog(): Promise<void> {
+        try {
+          await Promise.all([loadMcp(), loadCatalog()])
+          announce(copy.noticeRefreshed)
+        } catch (error) {
+          announce(copy.errorPrefix + (error as Error).message, 'error')
+        }
+      }
+
+      async function scanMcp(): Promise<void> {
+        setMcpBusy('scan')
+        setWarning('')
+        try {
+          await loadMcp()
+        } catch (error) {
+          announce(copy.errorPrefix + (error as Error).message, 'error')
+        } finally {
+          setMcpBusy('')
+        }
+      }
+
+      async function addMcp(): Promise<void> {
+        const text = mcpJson.trim()
+        if (text.length === 0) return
+        setMcpBusy('add')
+        setWarning('')
+        try {
+          const data = await api('/mcp/add', { method: 'POST', body: { json: text } })
+          const warnings = Array.isArray(data.warnings) ? data.warnings as string[] : []
+          const first = data.entry as EntryView | undefined
+          announce(fill(copy.mcpNoticeAdded, { name: first?.name ?? '' }))
+          if (warnings.length > 0) setWarning(`${copy.installWarnings} ${warnings.join('；')}`)
+          setMcpJson('')
+          await reload()
+          await loadMcp()
+        } catch (error) {
+          announce(copy.errorPrefix + (error as Error).message, 'error')
+        } finally {
+          setMcpBusy('')
+        }
+      }
+
+      async function linkMcp(keys: string[]): Promise<void> {
+        if (keys.length === 0) return
+        setMcpBusy('link')
+        setWarning('')
+        try {
+          const data = await api('/mcp/link', { method: 'POST', body: { keys } })
+          const warnings = Array.isArray(data.warnings) ? data.warnings as string[] : []
+          const count = Array.isArray(data.entries) ? data.entries.length : keys.length
+          announce(count === 1
+            ? fill(copy.mcpNoticeLinked, { name: (data.entries as EntryView[] | undefined)?.[0]?.name ?? '' })
+            : fill(copy.mcpNoticeLinkedMany, { count: String(count) }))
+          if (warnings.length > 0) setWarning(`${copy.installWarnings} ${warnings.join('；')}`)
+          setMcpSelected([])
+          await reload()
+          await loadMcp()
+        } catch (error) {
+          announce(copy.errorPrefix + (error as Error).message, 'error')
+        } finally {
+          setMcpBusy('')
+        }
+      }
+
+      async function unlinkMcp(ids: string[]): Promise<void> {
+        if (ids.length === 0) return
+        setMcpBusy('link')
+        try {
+          for (const id of ids) await api('/remove', { method: 'POST', body: { id } })
+          announce(ids.length === 1
+            ? fill(copy.noticeUnlinked, { name: ids[0]! })
+            : fill(copy.noticeUnlinkedMany, { count: String(ids.length) }))
+          setMcpSelected([])
+          await reload()
+          await loadMcp()
+        } catch (error) {
+          announce(copy.errorPrefix + (error as Error).message, 'error')
+        } finally {
+          setMcpBusy('')
+        }
+      }
+
+      async function probeMcp(entry: EntryView, server: string): Promise<void> {
+        setProbeBusy(`${entry.id}/${server}`)
+        setProbeText('')
+        try {
+          const data = await api('/mcp/probe', { method: 'POST', body: { id: entry.id, server } })
+          if (data.ok === false) {
+            announce(fill(copy.mcpProbeFail, { name: server, error: typeof data.error === 'string' ? data.error : '' }), 'error')
+          } else {
+            announce(fill(copy.mcpProbeOk, { name: server }))
+            setProbeText(JSON.stringify(data.result ?? {}, null, 2).slice(0, 4000))
+          }
+          await loadMcp()
+        } catch (error) {
+          announce(copy.errorPrefix + (error as Error).message, 'error')
+        } finally {
+          setProbeBusy('')
+        }
+      }
+
+      function toggleMcpSelected(key: string): void {
+        setMcpSelected(previous => previous.includes(key) ? previous.filter(item => item !== key) : [...previous, key])
+      }
+
+      function selectMcpGroup(rows: McpCandidate[], select: boolean): void {
+        const keys = rows.map(row => row.key)
+        setMcpSelected(previous => select ? [...new Set([...previous, ...keys])] : previous.filter(item => !keys.includes(item)))
+      }
+
       const stats = status?.store
-      const installedEntries = entries.filter(entry => entry.origin !== 'external')
-      const queueEntries = entries.filter(entry => entry.origin === 'external')
+      const installedEntries = entries.filter(entry => entry.origin !== 'external' && entry.kind !== 'mcp')
+      const queueEntries = entries.filter(entry => entry.origin === 'external' && entry.kind !== 'mcp')
       return h('div', { style: S.section },
         h('div', { style: S.row },
           h('h3', { style: S.title }, copy.title),
@@ -1333,7 +2114,8 @@
           h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.enabled)), h('span', { style: S.statLabel }, copy.enabledCount)),
           h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.external ?? 0)), h('span', { style: S.statLabel }, copy.externalCount)),
           h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.skills)), h('span', { style: S.statLabel }, copy.skillsCount)),
-          h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.mcpServers)), h('span', { style: S.statLabel }, copy.mcpCount)),
+          h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.mcp ?? mcpEntries.length)), h('span', { style: S.statLabel }, copy.mcpCount)),
+          h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.mcpServers)), h('span', { style: S.statLabel }, copy.capMcp)),
           h('div', { style: { ...S.stat, flex: 1, minWidth: '200px' } },
             h('span', { style: S.statLabel }, copy.storeDir),
             h('span', { style: S.mono }, stats.dir)),
@@ -1385,6 +2167,7 @@
           h('button', { type: 'button', style: S.tab(tab === 'chat'), onClick: () => setTab('chat') }, copy.tabChat),
           h('button', { type: 'button', style: S.tab(tab === 'installed'), onClick: () => setTab('installed') }, copy.tabInstalled),
           h('button', { type: 'button', style: S.tab(tab === 'queue'), onClick: () => setTab('queue') }, copy.tabQueue),
+          h('button', { type: 'button', style: S.tab(tab === 'mcp'), onClick: () => setTab('mcp') }, copy.tabMcp),
           h('button', { type: 'button', style: S.tab(tab === 'store'), onClick: () => setTab('store') }, copy.tabStore),
           h('button', { type: 'button', style: S.tab(tab === 'direct'), onClick: () => setTab('direct') }, copy.tabDirect),
           h('button', { type: 'button', style: S.tab(tab === 'import'), onClick: () => setTab('import') }, copy.tabImport),
@@ -1410,6 +2193,34 @@
               onRepair: (entry: EntryView) => { void repair(entry) },
               onLog: (entry: EntryView) => { void showLog(entry) },
             })
+            : tab === 'mcp'
+              ? h(McpPanel, {
+                copy,
+                entries: mcpEntries,
+                servers: mcpServers,
+                candidates: mcpCandidates,
+                platforms: mcpPlatforms,
+                busy: mcpBusy,
+                selected: mcpSelected,
+                jsonText: mcpJson,
+                setJsonText: setMcpJson,
+                probeBusy,
+                canProbe: status?.capabilities.probe !== false,
+                onScan: () => { void scanMcp() },
+                onAdd: () => { void addMcp() },
+                onToggle: (entry: EntryView) => { void toggle(entry) },
+                onRemove: (entry: EntryView) => { void remove(entry) },
+                onProbe: (entry: EntryView, server: string) => { void probeMcp(entry, server) },
+                onSelect: toggleMcpSelected,
+                onSelectGroup: selectMcpGroup,
+                onLink: (keys: string[]) => { void linkMcp(keys) },
+                onUnlink: (ids: string[]) => { void unlinkMcp(ids) },
+                catalog,
+                catalogBusy,
+                credentialsAvailable,
+                onConnect: (item: CatalogItem, values: Record<string, string>) => connectCatalog(item, values),
+                onRefreshCatalog: () => { void refreshCatalog() },
+              })
             : tab === 'store'
             ? h(SearchPanel, {
               copy,
@@ -1468,6 +2279,14 @@
             h('button', { type: 'button', style: S.button(false, false), onClick: () => setLog(undefined) }, copy.close),
           ),
           h('pre', { style: S.pre }, log.text),
+        ),
+        probeText.length === 0 ? null : h('div', { style: S.card },
+          h('div', { style: S.row },
+            h('span', { style: { fontSize: '13px', fontWeight: 600 } }, copy.mcpStatus),
+            h('span', { style: { flex: 1 } }),
+            h('button', { type: 'button', style: S.button(false, false), onClick: () => setProbeText('') }, copy.close),
+          ),
+          h('pre', { style: S.pre }, probeText),
         ),
       )
     }

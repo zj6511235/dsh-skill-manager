@@ -1,9 +1,9 @@
 {
   "name": "dsh-skill-manager",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
-  "description": "Local store for third-party skills and MCP servers: npm/GitHub/SkillHub/zip install, dependency self-heal, other-agent import, Web panel and CLI.",
+  "description": "Local store for third-party skills and MCP connectors: one-click connector marketplace with keys in DSH credentials, MCP add-by-config and reference from other agents, dependency self-heal, Web panel and CLI.",
   "license": "MIT",
   "author": "zj6511235",
   "repository": {
@@ -20,6 +20,7 @@
     "skills",
     "skill-store",
     "mcp",
+    "mcp-servers",
     "skillhub"
   ],
   "bin": {

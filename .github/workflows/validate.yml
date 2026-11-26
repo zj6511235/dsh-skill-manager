@@ -11,7 +11,26 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Validate package.json and bundle patch
         run: |
           node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));if(!p.name)throw new Error('name is required');if(!p.version)throw new Error('version is required');const patch=p.dsh&&p.dsh.bundle&&p.dsh.bundle.patch;if(patch&&!fs.existsSync(patch))throw new Error('bundle patch missing: '+patch);console.log('ok',p.name,p.version)"
+      - name: Committed build output parses
+        run: |
+          for f in index.js client.js host-api.js lib/*.js bin/*.mjs; do
+            node --check "$f"
+          done
+          echo "syntax ok"
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run build
+      - name: Build output matches the committed one
+        run: git diff --exit-code -- index.js client.js host-api.js lib
+      - run: npm test
