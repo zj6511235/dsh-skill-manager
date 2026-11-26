@@ -51,16 +51,18 @@
                     storeDir: '存储位置',
                     installedCount: '已安装',
                     enabledCount: '已启用',
-                    externalCount: '直接引用',
+                    externalCount: '引用队列',
                     skillsCount: '注册技能',
                     mcpCount: 'MCP 服务',
+                    statsHint: '「已安装 / 已启用」只统计复制进技能库的技能；从其他 Agent 引用的技能只进入「引用队列」，按任务待命、随用随调。',
                     capSkills: '技能服务',
                     capMcp: 'MCP 服务',
                     capOn: '可用',
                     capOff: '不可用',
                     tabInstalled: '已安装',
+                    tabQueue: '引用队列',
                     tabStore: 'SkillHub 商店',
-                    tabDirect: '直接使用其他 Agent',
+                    tabDirect: '引用其他 Agent',
                     tabImport: '从其他 Agent 导入',
                     tabChat: '对话安装技能',
                     installTitle: '安装新技能',
@@ -70,6 +72,7 @@
                     installing: '正在安装…',
                     installWarnings: '安装完成，但有提醒：',
                     emptyInstalled: '还没有安装任何技能。先在上面的输入框里贴一个来源。',
+                    emptyQueue: '引用队列为空。到「引用其他 Agent」勾选技能，勾上即加入待命队列。',
                     noDescription: '没有填写说明',
                     sourceNpm: 'npm',
                     sourceGit: 'Git',
@@ -84,34 +87,37 @@
                     repairing: '正在修复…',
                     log: '日志',
                     remove: '移除',
-                    unlink: '取消直接使用',
+                    unlink: '取消引用',
                     confirmRemove: '确认移除',
-                    directUse: '直接使用',
-                    directIntro: '读取本机各 Agent 已安装的 Skill，按平台勾选后直接注册使用。不复制文件、不改原目录，对方更新后这里立即生效。',
+                    directUse: '引用',
+                    directIntro: '读取本机各 Agent 已安装的 Skill。先勾选要引用的技能，再点「引用选中」一次性提交；勾选只是选择，不会立即发请求。不复制文件、不改原目录，对方更新后这里立即生效。引用后助手会按任务需求自动识别并调用对应技能。',
                     scanningPlatforms: '正在识别本机 Agent 平台…',
                     platformsTitle: '已识别平台',
                     noPlatforms: '没有识别到已安装的 Agent 技能目录。可以点「重新扫描」再试一次。',
                     platformCount: '{count} 个技能',
                     noSkillsInPlatform: '该平台未发现技能',
-                    selectAllPlatforms: '全选所有',
-                    clearAllPlatforms: '清空所有',
+                    selectAllPlatforms: '全选',
+                    clearAllPlatforms: '清空',
                     expand: '展开',
                     collapse: '收起',
                     selectedCount: '已选 {count} 个',
-                    useSelected: '直接使用选中（{count}）',
-                    unuseSelected: '取消选中（{count}）',
+                    queueTitle: '引用队列',
+                    queueCount: '{count} 个待命',
+                    queueEmpty: '还没有引用技能；勾选后立即进入队列待命，对话时按任务自动调用。',
+                    useSelected: '引用选中（{count}）',
+                    unuseSelected: '取消引用选中（{count}）',
                     selectAll: '全选',
                     clearAll: '清空',
-                    directUsing: '正在启用…',
-                    directUseHint: '直接使用不会安装依赖，也不会改动原目录；依赖需要在原 Agent 中可用。',
-                    linkedBadge: '直接使用中',
+                    directUsing: '正在引用…',
+                    directUseHint: '批量引用会跳过无效目录（缺 SKILL.md、解析失败、重名冲突），其余照常注册；引用不安装依赖、不改原目录。引用后由助手按任务自动调用。',
+                    linkedBadge: '已引用',
                     externalBadge: '外部 · 不复制',
                     copiedBadge: '已复制',
-                    noticeLinked: '已直接使用 {name}',
-                    noticeUnlinked: '已取消直接使用 {name}',
-                    noticeLinkedMany: '已直接使用 {count} 个技能',
-                    noticeUnlinkedMany: '已取消 {count} 个直接引用',
-                    batchTooLarge: '一次最多直接使用 100 个技能，请按平台或分批选择。',
+                    noticeLinked: '已引用 {name}',
+                    noticeUnlinked: '已取消引用 {name}',
+                    noticeLinkedMany: '已引用 {count} 个技能',
+                    noticeUnlinkedMany: '已取消 {count} 个引用',
+                    batchTooLarge: '所选技能较多，正在一次性注册全部，请稍候。',
                     cancel: '取消',
                     close: '关闭',
                     skillsLabel: '技能',
@@ -165,6 +171,7 @@
                     permissionHint: '安装第三方技能等于在本机运行它的依赖安装脚本；只安装你信任的来源。',
                     allowScripts: '允许依赖安装脚本',
                     errorPrefix: '操作失败：',
+                    hostReloadHint: '（若仍看到旧错误，请重启一次 DeepSeek Harness，让新的批量引用逻辑生效）',
                 },
                 en: {
                     nav: 'Skill Store',
@@ -173,16 +180,18 @@
                     storeDir: 'Store',
                     installedCount: 'Installed',
                     enabledCount: 'Enabled',
-                    externalCount: 'In place',
+                    externalCount: 'In queue',
                     skillsCount: 'Skills',
                     mcpCount: 'MCP servers',
+                    statsHint: '“Installed / Enabled” count only copied skills; skills referenced from other agents go to the “Reference queue” and wait on standby for on-demand use.',
                     capSkills: 'Skills service',
                     capMcp: 'MCP service',
                     capOn: 'available',
                     capOff: 'unavailable',
                     tabInstalled: 'Installed',
+                    tabQueue: 'Reference queue',
                     tabStore: 'SkillHub',
-                    tabDirect: 'Use other agents',
+                    tabDirect: 'Reference other agents',
                     tabImport: 'Import from agents',
                     tabChat: 'Install by chat',
                     installTitle: 'Install a skill',
@@ -192,6 +201,7 @@
                     installing: 'Installing…',
                     installWarnings: 'Installed, with warnings:',
                     emptyInstalled: 'Nothing installed yet. Paste a source above to begin.',
+                    emptyQueue: 'The reference queue is empty. Tick skills under “Reference other agents” to put them on standby.',
                     noDescription: 'No description',
                     sourceNpm: 'npm',
                     sourceGit: 'Git',
@@ -206,34 +216,37 @@
                     repairing: 'Repairing…',
                     log: 'Log',
                     remove: 'Remove',
-                    unlink: 'Stop using',
+                    unlink: 'Drop reference',
                     confirmRemove: 'Confirm remove',
-                    directUse: 'Use in place',
-                    directIntro: 'Read the skills other agents installed on this computer and use them by platform. Nothing is copied and the original folder is untouched; updates made by that agent apply immediately.',
+                    directUse: 'Reference',
+                    directIntro: 'Read the skills other agents installed on this computer. Tick the skills you want, then click “Reference selected” to submit them in one go — ticking is only a selection and sends no request. Nothing is copied and the original folder is untouched; updates made by that agent apply immediately. Referenced skills are recognized and called per task automatically.',
                     scanningPlatforms: 'Detecting agent platforms on this computer…',
                     platformsTitle: 'Detected platforms',
                     noPlatforms: 'No agent skill folder was found. Try “Scan again”.',
                     platformCount: '{count} skills',
                     noSkillsInPlatform: 'No skills found in this platform',
                     selectAllPlatforms: 'Select all',
-                    clearAllPlatforms: 'Clear all',
+                    clearAllPlatforms: 'Clear',
                     expand: 'Expand',
                     collapse: 'Collapse',
                     selectedCount: '{count} selected',
-                    useSelected: 'Use selected ({count})',
-                    unuseSelected: 'Stop using selected ({count})',
+                    queueTitle: 'Reference queue',
+                    queueCount: '{count} on standby',
+                    queueEmpty: 'No skills referenced yet; tick one to put it on standby for on-demand use.',
+                    useSelected: 'Reference selected ({count})',
+                    unuseSelected: 'Unreference selected ({count})',
                     selectAll: 'Select all',
                     clearAll: 'Clear',
-                    directUsing: 'Linking…',
-                    directUseHint: 'Use in place does not install dependencies or modify the original folder; dependencies must already work in the other agent.',
-                    linkedBadge: 'Used in place',
+                    directUsing: 'Referencing…',
+                    directUseHint: 'A batch skips invalid folders (missing SKILL.md, parse errors, name conflicts) and registers the rest; referencing installs nothing and touches no files. Referenced skills are called per task automatically.',
+                    linkedBadge: 'Referenced',
                     externalBadge: 'External · not copied',
                     copiedBadge: 'Copied',
-                    noticeLinked: 'Now using {name} in place',
-                    noticeUnlinked: 'Stopped using {name}',
-                    noticeLinkedMany: 'Using {count} skills in place',
-                    noticeUnlinkedMany: 'Stopped {count} in-place references',
-                    batchTooLarge: 'At most 100 skills can be linked at once; pick a platform or split the batch.',
+                    noticeLinked: 'Referenced {name}',
+                    noticeUnlinked: 'Dropped reference to {name}',
+                    noticeLinkedMany: 'Referenced {count} skills',
+                    noticeUnlinkedMany: 'Dropped {count} references',
+                    batchTooLarge: 'Linking all selected skills at once; this may take a moment.',
                     cancel: 'Cancel',
                     close: 'Close',
                     skillsLabel: 'Skills',
@@ -287,6 +300,7 @@
                     permissionHint: 'Installing a third-party skill means running its dependency installer on this machine. Only install sources you trust.',
                     allowScripts: 'Allow dependency install scripts',
                     errorPrefix: 'Action failed: ',
+                    hostReloadHint: ' (If the old error persists, restart DeepSeek Harness once so the new batch logic loads.)',
                 },
             };
             function copyFor(lang) {
@@ -536,7 +550,7 @@
             function InstalledPanel(props) {
                 const { copy, entries } = props;
                 if (entries.length === 0)
-                    return h('p', { style: S.dim }, copy.emptyInstalled);
+                    return h('p', { style: S.dim }, props.emptyText ?? copy.emptyInstalled);
                 return h('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } }, entries.map(entry => h('div', { key: entry.id, style: S.card }, h('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' } }, h('span', { style: { fontSize: '14px', fontWeight: 600 } }, entry.name), h(Badge, { tone: entry.enabled ? 'ok' : 'muted' }, entry.enabled ? copy.enabled : copy.disabled), h(Badge, { tone: entry.origin === 'external' ? 'warn' : 'muted' }, entry.origin === 'external' ? copy.externalBadge : sourceLabel(entry.source.kind, copy)), h('span', { style: S.meta }, `${copy.versionLabel} ${entry.version}`), h('span', { style: { flex: 1 } }), h('button', {
                     type: 'button',
                     style: S.switch(entry.enabled),
@@ -587,6 +601,11 @@
                     onClick: () => props.onImport(candidate),
                 }, props.imported === candidate.path ? copy.importing : copy.import))))));
             }
+            /**
+             * Selection is local and never fires a request: tick skills, then click
+             * 「引用选中」to commit them in one tolerant batch. This keeps selection
+             * usable even when an individual package is broken.
+             */
             function DirectPanel(props) {
                 const { copy } = props;
                 const [expanded, setExpanded] = useState([]);
@@ -599,26 +618,12 @@
                     groups.set(candidate.agentLabel, list);
                 }
                 const selectedCandidates = props.candidates.filter(candidate => props.selected.includes(candidate.path));
-                const usable = selectedCandidates.filter(candidate => !candidate.linked && !candidate.installed);
-                const linked = selectedCandidates.filter(candidate => candidate.linked && candidate.linkedId !== undefined);
+                const usableSelected = selectedCandidates.filter(candidate => !candidate.linked && !candidate.installed);
+                const linkedSelected = selectedCandidates.filter(candidate => candidate.linked && candidate.linkedId !== undefined);
+                const linkedCandidates = props.candidates.filter(candidate => candidate.linked && candidate.linkedId !== undefined);
                 const allSelectable = props.candidates.filter(candidate => !candidate.installed || candidate.linked);
                 const batchBusy = props.directBusy === 'batch';
                 return h('div', { style: { display: 'flex', flexDirection: 'column', gap: '10px' } }, h('p', { style: S.dim }, copy.directIntro), props.busy ? h('p', { style: S.dim }, copy.scanningPlatforms) : null, h('div', { style: S.row }, h('button', { type: 'button', style: S.button(false, props.busy), disabled: props.busy, onClick: props.onScan }, props.busy ? copy.scanning : copy.scan), h('span', { style: S.meta }, `${copy.platformsTitle}: ${props.platforms.length}`), h('span', { style: S.meta }, fill(copy.selectedCount, { count: String(selectedCandidates.length) })), h('button', {
-                    type: 'button',
-                    style: S.button(true, batchBusy || usable.length === 0),
-                    disabled: batchBusy || usable.length === 0,
-                    onClick: () => props.onUse(usable.map(candidate => candidate.path)),
-                }, batchBusy ? copy.directUsing : fill(copy.useSelected, { count: String(usable.length) })), h('button', {
-                    type: 'button',
-                    style: S.button(false, batchBusy || linked.length === 0),
-                    disabled: batchBusy || linked.length === 0,
-                    onClick: () => props.onUnuse(linked.map(candidate => candidate.linkedId)),
-                }, fill(copy.unuseSelected, { count: String(linked.length) }))), props.platforms.length > 0
-                    ? h('div', { style: S.row }, h('span', { style: S.meta }, copy.platformsTitle), ...props.platforms.map(platform => h(Badge, {
-                        key: platform.agent,
-                        tone: platform.count > 0 ? 'ok' : 'muted',
-                    }, `${platform.label} · ${platform.count}`)))
-                    : (props.busy ? null : h('p', { style: S.dim }, copy.noPlatforms)), h('div', { style: S.row }, h('button', {
                     type: 'button',
                     style: S.button(false, allSelectable.length === 0),
                     disabled: allSelectable.length === 0,
@@ -628,14 +633,36 @@
                     style: S.button(false, props.selected.length === 0),
                     disabled: props.selected.length === 0,
                     onClick: () => props.onSelectAll(false),
-                }, copy.clearAllPlatforms)), h('p', { style: S.dim }, copy.directUseHint), props.candidates.length === 0 && !props.busy ? h('p', { style: S.dim }, copy.importEmpty) : null, [...groups.entries()].map(([label, rows]) => {
+                }, copy.clearAllPlatforms), h('button', {
+                    type: 'button',
+                    style: S.button(true, batchBusy || usableSelected.length === 0),
+                    disabled: batchBusy || usableSelected.length === 0,
+                    onClick: () => props.onUse(usableSelected.map(candidate => candidate.path)),
+                }, batchBusy ? copy.directUsing : fill(copy.useSelected, { count: String(usableSelected.length) })), h('button', {
+                    type: 'button',
+                    style: S.button(false, batchBusy || linkedSelected.length === 0),
+                    disabled: batchBusy || linkedSelected.length === 0,
+                    onClick: () => props.onUnuse(linkedSelected.map(candidate => candidate.linkedId)),
+                }, fill(copy.unuseSelected, { count: String(linkedSelected.length) }))), props.platforms.length > 0
+                    ? h('div', { style: S.row }, h('span', { style: S.meta }, copy.platformsTitle), ...props.platforms.map(platform => h(Badge, {
+                        key: platform.agent,
+                        tone: platform.count > 0 ? 'ok' : 'muted',
+                    }, `${platform.label} · ${platform.count}`)))
+                    : (props.busy ? null : h('p', { style: S.dim }, copy.noPlatforms)), h('p', { style: S.dim }, copy.directUseHint), linkedCandidates.length === 0
+                    ? h('p', { style: S.dim }, copy.queueEmpty)
+                    : h('div', { style: S.card }, h('div', { style: S.row }, h('span', { style: { fontSize: '13px', fontWeight: 600 } }, copy.queueTitle), h('span', { style: S.meta }, fill(copy.queueCount, { count: String(linkedCandidates.length) })), h('span', { style: { flex: 1 } }), h('button', {
+                        type: 'button',
+                        style: S.button(false, batchBusy),
+                        disabled: batchBusy,
+                        onClick: () => props.onUnuse(linkedCandidates.map(candidate => candidate.linkedId)),
+                    }, copy.clearAllPlatforms)), h('div', { style: { ...S.row, flexWrap: 'wrap' } }, ...linkedCandidates.slice(0, 24).map(candidate => h(Badge, { key: candidate.path, tone: 'ok' }, candidate.name)), linkedCandidates.length > 24 ? h('span', { style: S.meta }, `… +${String(linkedCandidates.length - 24)}`) : null)), props.candidates.length === 0 && !props.busy ? h('p', { style: S.dim }, copy.importEmpty) : null, [...groups.entries()].map(([label, rows]) => {
                     const selectable = rows.filter(candidate => !candidate.installed || candidate.linked);
                     const allSelected = selectable.length > 0 && selectable.every(candidate => props.selected.includes(candidate.path));
                     const open = expanded.includes(label);
                     return h('div', { key: label, style: S.card }, h('div', { style: S.row }, h('span', { style: { fontSize: '13px', fontWeight: 600 } }, label), h(Badge, { tone: rows.length > 0 ? 'ok' : 'muted' }, String(rows.length)), h('span', { style: { flex: 1 } }), h('button', {
                         type: 'button',
-                        style: S.button(false, selectable.length === 0),
-                        disabled: selectable.length === 0,
+                        style: S.button(false, batchBusy || selectable.length === 0),
+                        disabled: batchBusy || selectable.length === 0,
                         onClick: () => props.onSelectGroup(selectable, !allSelected),
                     }, allSelected ? copy.clearAll : copy.selectAll), h('button', {
                         type: 'button',
@@ -644,27 +671,16 @@
                         onClick: () => setExpanded(previous => previous.includes(label)
                             ? previous.filter(item => item !== label)
                             : [...previous, label]),
-                    }, open ? copy.collapse : `${copy.expand} (${String(rows.length)})`)), open && rows.length === 0 ? h('p', { style: S.dim }, copy.noSkillsInPlatform) : null, open ? rows.map(candidate => h('div', { key: candidate.path, style: { ...S.row, alignItems: 'flex-start', padding: '6px 0', borderTop: '0.5px solid var(--dsw-alias-border-l3)' } }, h('input', {
-                        type: 'checkbox',
-                        checked: props.selected.includes(candidate.path),
-                        disabled: candidate.installed && !candidate.linked,
-                        'aria-label': candidate.name,
-                        onChange: () => props.onToggle(candidate.path),
-                    }), h('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0 } }, h('div', { style: S.row }, h('span', { style: { fontSize: '13px', fontWeight: 600 } }, candidate.name), candidate.linked ? h(Badge, { tone: 'ok' }, copy.linkedBadge) : null, !candidate.linked && candidate.installed ? h(Badge, null, copy.copiedBadge) : null), h('span', { style: S.dim }, candidate.description || copy.noDescription), h('span', { style: S.mono }, candidate.path)), candidate.linked
-                        ? h('button', {
-                            type: 'button',
-                            style: S.button(false, props.directBusy === candidate.path),
-                            disabled: props.directBusy === candidate.path,
-                            onClick: () => props.onUnuse([candidate.linkedId]),
-                        }, copy.unlink)
-                        : candidate.installed
-                            ? null
-                            : h('button', {
-                                type: 'button',
-                                style: S.button(true, props.directBusy === candidate.path),
-                                disabled: props.directBusy === candidate.path,
-                                onClick: () => props.onUse([candidate.path]),
-                            }, props.directBusy === candidate.path ? copy.directUsing : copy.directUse))) : null);
+                    }, open ? copy.collapse : `${copy.expand} (${String(rows.length)})`)), open && rows.length === 0 ? h('p', { style: S.dim }, copy.noSkillsInPlatform) : null, open ? rows.map(candidate => {
+                        const copied = candidate.installed && !candidate.linked;
+                        return h('div', { key: candidate.path, style: { ...S.row, alignItems: 'flex-start', padding: '6px 0', borderTop: '0.5px solid var(--dsw-alias-border-l3)' } }, h('input', {
+                            type: 'checkbox',
+                            checked: props.selected.includes(candidate.path),
+                            disabled: copied || batchBusy,
+                            'aria-label': candidate.name,
+                            onChange: () => props.onToggle(candidate.path),
+                        }), h('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0 } }, h('div', { style: S.row }, h('span', { style: { fontSize: '13px', fontWeight: 600 } }, candidate.name), candidate.linked ? h(Badge, { tone: 'ok' }, copy.linkedBadge) : null, !candidate.linked && candidate.installed ? h(Badge, null, copy.copiedBadge) : null), h('span', { style: S.dim }, candidate.description || copy.noDescription), h('span', { style: S.mono }, candidate.path)));
+                    }) : null);
                 }));
             }
             function SkillManagerPage(props) {
@@ -868,31 +884,53 @@
                 async function usePaths(paths) {
                     if (paths.length === 0)
                         return;
-                    if (paths.length > 100) {
-                        announce(copy.batchTooLarge, 'error');
-                        return;
-                    }
+                    if (paths.length > 100)
+                        announce(copy.batchTooLarge, 'ok');
                     setDirectBusy(paths.length === 1 ? paths[0] : 'batch');
                     setWarning('');
+                    // A stale Host aborts the whole batch on one bad folder. Drop the named
+                    // culprit and retry so a select-all still references every valid skill.
+                    const skipped = [];
+                    let remaining = [...paths];
+                    let data;
                     try {
-                        const data = await api('/link', { method: 'POST', body: { paths } });
+                        for (let attempt = 0; attempt < 24 && remaining.length > 0; attempt += 1) {
+                            try {
+                                data = await api('/link', { method: 'POST', body: { paths: remaining } });
+                                break;
+                            }
+                            catch (error) {
+                                const message = error.message;
+                                const culprit = remaining.find(path => message.includes(path));
+                                if (culprit === undefined)
+                                    throw error;
+                                skipped.push(culprit);
+                                remaining = remaining.filter(path => path !== culprit);
+                            }
+                        }
+                        if (data === undefined) {
+                            throw new Error(skipped.length > 0 ? `已跳过 ${String(skipped.length)} 个无效技能` : '引用失败');
+                        }
                         const warnings = Array.isArray(data.warnings) ? data.warnings : [];
-                        const linkedCount = Array.isArray(data.entries) ? data.entries.length : paths.length;
-                        const names = paths.length === 1 ? paths[0] : String(linkedCount);
+                        const linkedCount = Array.isArray(data.entries) ? data.entries.length : remaining.length;
+                        const names = remaining.length === 1 ? remaining[0] : String(linkedCount);
                         setNotice({
                             text: linkedCount === 1
                                 ? fill(copy.noticeLinked, { name: basenameLike(names) })
                                 : fill(copy.noticeLinkedMany, { count: String(linkedCount) }),
                             tone: 'ok',
                         });
-                        if (warnings.length > 0)
-                            setWarning(`${copy.installWarnings} ${warnings.join('；')}`);
+                        const allWarnings = [...skipped.map(path => `跳过（无效）：${path}`), ...warnings];
+                        if (allWarnings.length > 0)
+                            setWarning(`${copy.installWarnings} ${allWarnings.join('；')}`);
                         setSelected([]);
                         await reload();
                         await scan();
                     }
                     catch (error) {
-                        announce(copy.errorPrefix + error.message, 'error');
+                        const message = error.message;
+                        const stale = message.includes('技能名重复') || message.includes('SKILL.md');
+                        announce(copy.errorPrefix + message + (stale ? copy.hostReloadHint : ''), 'error');
                     }
                     finally {
                         setDirectBusy('');
@@ -1012,7 +1050,9 @@
                     }
                 }
                 const stats = status?.store;
-                return h('div', { style: S.section }, h('div', { style: S.row }, h('h3', { style: S.title }, copy.title), h('span', { style: { flex: 1 } }), h('button', { type: 'button', style: S.button(false, false), onClick: () => { void reload().then(() => announce(copy.noticeRefreshed)); } }, copy.refresh)), h('p', { style: S.intro }, copy.intro), stats === undefined ? null : h('div', { style: { ...S.card, flexDirection: 'row', gap: '24px', flexWrap: 'wrap' } }, h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.count)), h('span', { style: S.statLabel }, copy.installedCount)), h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.enabled)), h('span', { style: S.statLabel }, copy.enabledCount)), h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.external ?? 0)), h('span', { style: S.statLabel }, copy.externalCount)), h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.skills)), h('span', { style: S.statLabel }, copy.skillsCount)), h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.mcpServers)), h('span', { style: S.statLabel }, copy.mcpCount)), h('div', { style: { ...S.stat, flex: 1, minWidth: '200px' } }, h('span', { style: S.statLabel }, copy.storeDir), h('span', { style: S.mono }, stats.dir)), h('div', { style: { display: 'flex', flexDirection: 'column', gap: '4px' } }, h('span', { style: S.statLabel }, copy.capSkills), h(Badge, { tone: status?.capabilities.skills ? 'ok' : 'warn' }, status?.capabilities.skills ? copy.capOn : copy.capOff), h('span', { style: S.statLabel }, copy.capMcp), h(Badge, { tone: status?.capabilities.mcp ? 'ok' : 'warn' }, status?.capabilities.mcp ? copy.capOn : copy.capOff))), status !== undefined && status.warnings.length > 0
+                const installedEntries = entries.filter(entry => entry.origin !== 'external');
+                const queueEntries = entries.filter(entry => entry.origin === 'external');
+                return h('div', { style: S.section }, h('div', { style: S.row }, h('h3', { style: S.title }, copy.title), h('span', { style: { flex: 1 } }), h('button', { type: 'button', style: S.button(false, false), onClick: () => { void reload().then(() => announce(copy.noticeRefreshed)); } }, copy.refresh)), h('p', { style: S.intro }, copy.intro), stats === undefined ? null : h('div', { style: { ...S.card, flexDirection: 'row', gap: '24px', flexWrap: 'wrap' } }, h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.count)), h('span', { style: S.statLabel }, copy.installedCount)), h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.enabled)), h('span', { style: S.statLabel }, copy.enabledCount)), h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.external ?? 0)), h('span', { style: S.statLabel }, copy.externalCount)), h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.skills)), h('span', { style: S.statLabel }, copy.skillsCount)), h('div', { style: S.stat }, h('span', { style: S.statValue }, String(stats.mcpServers)), h('span', { style: S.statLabel }, copy.mcpCount)), h('div', { style: { ...S.stat, flex: 1, minWidth: '200px' } }, h('span', { style: S.statLabel }, copy.storeDir), h('span', { style: S.mono }, stats.dir)), h('div', { style: { display: 'flex', flexDirection: 'column', gap: '4px' } }, h('span', { style: S.statLabel }, copy.capSkills), h(Badge, { tone: status?.capabilities.skills ? 'ok' : 'warn' }, status?.capabilities.skills ? copy.capOn : copy.capOff), h('span', { style: S.statLabel }, copy.capMcp), h(Badge, { tone: status?.capabilities.mcp ? 'ok' : 'warn' }, status?.capabilities.mcp ? copy.capOn : copy.capOff)), h('p', { style: { ...S.dim, flexBasis: '100%', margin: 0 } }, copy.statsHint)), status !== undefined && status.warnings.length > 0
                     ? h('div', { style: S.card }, h('span', { style: { fontSize: '13px', fontWeight: 600 } }, copy.warningsTitle), ...status.warnings.map((text, index) => h('p', { key: `${String(index)}-${text}`, style: S.dim }, text)))
                     : null, tab === 'chat' ? null : h('div', { style: S.card }, h('span', { style: { fontSize: '13px', fontWeight: 600 } }, copy.installTitle), h('div', { style: S.row }, h('input', {
                     style: { ...S.input, flex: 1, minWidth: '240px' },
@@ -1031,64 +1071,75 @@
                     type: 'checkbox',
                     checked: allowScripts,
                     onChange: (event) => setAllowScripts(event.target.checked),
-                }), copy.allowScripts), h('p', { style: S.dim }, copy.permissionHint), warning.length > 0 ? h('p', { style: S.notice('error') }, warning) : null), h(Notice, { text: notice.text, tone: notice.tone }), h('div', { style: S.tabs }, h('button', { type: 'button', style: S.tab(tab === 'chat'), onClick: () => setTab('chat') }, copy.tabChat), h('button', { type: 'button', style: S.tab(tab === 'installed'), onClick: () => setTab('installed') }, copy.tabInstalled), h('button', { type: 'button', style: S.tab(tab === 'store'), onClick: () => setTab('store') }, copy.tabStore), h('button', { type: 'button', style: S.tab(tab === 'direct'), onClick: () => setTab('direct') }, copy.tabDirect), h('button', { type: 'button', style: S.tab(tab === 'import'), onClick: () => setTab('import') }, copy.tabImport)), tab === 'installed'
+                }), copy.allowScripts), h('p', { style: S.dim }, copy.permissionHint), warning.length > 0 ? h('p', { style: S.notice('error') }, warning) : null), h(Notice, { text: notice.text, tone: notice.tone }), h('div', { style: S.tabs }, h('button', { type: 'button', style: S.tab(tab === 'chat'), onClick: () => setTab('chat') }, copy.tabChat), h('button', { type: 'button', style: S.tab(tab === 'installed'), onClick: () => setTab('installed') }, copy.tabInstalled), h('button', { type: 'button', style: S.tab(tab === 'queue'), onClick: () => setTab('queue') }, copy.tabQueue), h('button', { type: 'button', style: S.tab(tab === 'store'), onClick: () => setTab('store') }, copy.tabStore), h('button', { type: 'button', style: S.tab(tab === 'direct'), onClick: () => setTab('direct') }, copy.tabDirect), h('button', { type: 'button', style: S.tab(tab === 'import'), onClick: () => setTab('import') }, copy.tabImport)), tab === 'installed'
                     ? h(InstalledPanel, {
                         copy,
-                        entries,
+                        entries: installedEntries,
                         busy: busyId,
                         onToggle: (entry) => { void toggle(entry); },
                         onRemove: (entry) => { void remove(entry); },
                         onRepair: (entry) => { void repair(entry); },
                         onLog: (entry) => { void showLog(entry); },
                     })
-                    : tab === 'store'
-                        ? h(SearchPanel, {
+                    : tab === 'queue'
+                        ? h(InstalledPanel, {
                             copy,
-                            query,
-                            setQuery,
-                            results,
-                            busy: searchBusy,
-                            searched,
-                            installBusy,
-                            onSearch: () => { void search(); },
-                            onInstall: (item) => { void installFrom(`skillhub:${item.slug}`, item.slug); },
+                            entries: queueEntries,
+                            busy: busyId,
+                            emptyText: copy.emptyQueue,
+                            onToggle: (entry) => { void toggle(entry); },
+                            onRemove: (entry) => { void remove(entry); },
+                            onRepair: (entry) => { void repair(entry); },
+                            onLog: (entry) => { void showLog(entry); },
                         })
-                        : tab === 'direct'
-                            ? h(DirectPanel, {
+                        : tab === 'store'
+                            ? h(SearchPanel, {
                                 copy,
-                                candidates,
-                                platforms,
-                                busy: scanBusy,
-                                directBusy,
-                                selected,
-                                onScan: () => { void scan(); },
-                                onToggle: toggleSelected,
-                                onSelectGroup: selectGroup,
-                                onSelectAll: (select) => selectGroup(candidates.filter(candidate => !candidate.installed || candidate.linked), select),
-                                onUse: (paths) => { void usePaths(paths); },
-                                onUnuse: (ids) => { void unuseIds(ids); },
+                                query,
+                                setQuery,
+                                results,
+                                busy: searchBusy,
+                                searched,
+                                installBusy,
+                                onSearch: () => { void search(); },
+                                onInstall: (item) => { void installFrom(`skillhub:${item.slug}`, item.slug); },
                             })
-                            : tab === 'import'
-                                ? h(ImportPanel, {
+                            : tab === 'direct'
+                                ? h(DirectPanel, {
                                     copy,
                                     candidates,
+                                    platforms,
                                     busy: scanBusy,
-                                    imported,
+                                    directBusy,
+                                    selected,
                                     onScan: () => { void scan(); },
-                                    onImport: (candidate) => { void importCandidate(candidate); },
+                                    onToggle: toggleSelected,
+                                    onSelectGroup: selectGroup,
+                                    onSelectAll: (select) => selectGroup(candidates.filter(candidate => !candidate.installed || candidate.linked), select),
+                                    onUse: (paths) => { void usePaths(paths); },
+                                    onUnuse: (ids) => { void unuseIds(ids); },
                                 })
-                                : h(ChatPanel, {
-                                    copy,
-                                    messages: chatMessages,
-                                    input: chatInput,
-                                    setInput: setChatInput,
-                                    busy: chatBusy,
-                                    installing: chatInstalling,
-                                    onSend: () => { void sendChat(); },
-                                    onInstall: (item) => { void installChatItem(item); },
-                                    onCopy: (prompt) => { void copyChatPrompt(prompt); },
-                                    onExample: (text) => { void sendChat(text); },
-                                }), log === undefined ? null : h('div', { style: S.card }, h('div', { style: S.row }, h('span', { style: { fontSize: '13px', fontWeight: 600 } }, log.title), h('span', { style: { flex: 1 } }), h('button', { type: 'button', style: S.button(false, false), onClick: () => setLog(undefined) }, copy.close)), h('pre', { style: S.pre }, log.text)));
+                                : tab === 'import'
+                                    ? h(ImportPanel, {
+                                        copy,
+                                        candidates,
+                                        busy: scanBusy,
+                                        imported,
+                                        onScan: () => { void scan(); },
+                                        onImport: (candidate) => { void importCandidate(candidate); },
+                                    })
+                                    : h(ChatPanel, {
+                                        copy,
+                                        messages: chatMessages,
+                                        input: chatInput,
+                                        setInput: setChatInput,
+                                        busy: chatBusy,
+                                        installing: chatInstalling,
+                                        onSend: () => { void sendChat(); },
+                                        onInstall: (item) => { void installChatItem(item); },
+                                        onCopy: (prompt) => { void copyChatPrompt(prompt); },
+                                        onExample: (text) => { void sendChat(text); },
+                                    }), log === undefined ? null : h('div', { style: S.card }, h('div', { style: S.row }, h('span', { style: { fontSize: '13px', fontWeight: 600 } }, log.title), h('span', { style: { flex: 1 } }), h('button', { type: 'button', style: S.button(false, false), onClick: () => setLog(undefined) }, copy.close)), h('pre', { style: S.pre }, log.text)));
             }
             // ----------------------------------------------------------------- apply --
             return {

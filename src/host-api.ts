@@ -3,7 +3,8 @@
  *
  * Every route is local-only and fenced by `connection.requestRejection` in
  * the Host entry before this handler runs. Bodies are JSON objects capped at
- * 64 KiB, and refusals use the store's stable error codes.
+ * 4 MiB (large enough for a full select-all batch of referenced paths), and
+ * refusals use the store's stable error codes.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { SkillManagerError, errorMessage, isSkillManagerError } from './lib/errors.js'
@@ -13,7 +14,7 @@ import type { RegistrationController } from './lib/registry.js'
 import type { SkillStore } from './lib/store.js'
 import type { InstallResult, InstalledSkill } from './lib/types.js'
 
-const MAX_BODY_BYTES = 64 * 1024
+const MAX_BODY_BYTES = 4 * 1024 * 1024
 const MAX_SOURCE_LENGTH = 2048
 const MAX_ID_LENGTH = 100
 
@@ -135,7 +136,7 @@ export function createApi(deps: ApiDeps): ApiHandler {
       if (route === '/install') {
         if (method !== 'POST') return methodNotAllowed(res, 'POST')
         const body = await readJsonBody(req)
-        if (body === null) return sendJson(res, 400, { error: '请求体必须是 JSON 对象，且不超过 64 KiB', code: 'invalid-source' })
+        if (body === null) return sendJson(res, 400, { error: '请求体必须是 JSON 对象，且不超过 4 MiB', code: 'invalid-source' })
         const source = stringField(body, 'source')
         if (source.length === 0) return sendJson(res, 400, { error: '缺少 source', code: 'invalid-source' })
         const result = await store.install(source, {
@@ -215,7 +216,7 @@ export function createApi(deps: ApiDeps): ApiHandler {
         const many = Array.isArray(body.paths)
           ? body.paths.filter((item): item is string => typeof item === 'string' && item.trim().length > 0).map(item => item.trim().slice(0, 2048))
           : []
-        const paths = many.length > 0 ? many.slice(0, 200) : (single.length > 0 ? [single] : [])
+        const paths = many.length > 0 ? many : (single.length > 0 ? [single] : [])
         if (paths.length === 0) return sendJson(res, 400, { error: '缺少 path 或 paths', code: 'invalid-source' })
         const batch = await store.linkMany(paths, {
           enable: body.enable !== false,

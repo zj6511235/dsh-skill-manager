@@ -1,7 +1,7 @@
 import { errorMessage, isSkillManagerError } from './lib/errors.js';
 import { redactSecrets } from './lib/process.js';
 import { getSkillhubDetail, searchSkillhub } from './lib/skillhub.js';
-const MAX_BODY_BYTES = 64 * 1024;
+const MAX_BODY_BYTES = 4 * 1024 * 1024;
 const MAX_SOURCE_LENGTH = 2048;
 const MAX_ID_LENGTH = 100;
 function sendJson(res, status, payload) {
@@ -109,7 +109,7 @@ export function createApi(deps) {
                     return methodNotAllowed(res, 'POST');
                 const body = await readJsonBody(req);
                 if (body === null)
-                    return sendJson(res, 400, { error: '请求体必须是 JSON 对象，且不超过 64 KiB', code: 'invalid-source' });
+                    return sendJson(res, 400, { error: '请求体必须是 JSON 对象，且不超过 4 MiB', code: 'invalid-source' });
                 const source = stringField(body, 'source');
                 if (source.length === 0)
                     return sendJson(res, 400, { error: '缺少 source', code: 'invalid-source' });
@@ -198,7 +198,7 @@ export function createApi(deps) {
                 const many = Array.isArray(body.paths)
                     ? body.paths.filter((item) => typeof item === 'string' && item.trim().length > 0).map(item => item.trim().slice(0, 2048))
                     : [];
-                const paths = many.length > 0 ? many.slice(0, 200) : (single.length > 0 ? [single] : []);
+                const paths = many.length > 0 ? many : (single.length > 0 ? [single] : []);
                 if (paths.length === 0)
                     return sendJson(res, 400, { error: '缺少 path 或 paths', code: 'invalid-source' });
                 const batch = await store.linkMany(paths, {

@@ -248,6 +248,51 @@ test('store: batch direct-use links several agents in one transaction', async ()
   }
 })
 
+test('store: linkMany has no 100-skill cap (select-all registers every skill)', async () => {
+  const root = temp('skm-link-all-')
+  try {
+    const paths = []
+    const total = 120
+    for (let index = 0; index < total; index += 1) {
+      paths.push(writeSkillDir(join(root, 'agents', `agent-${index}`, 'skills', `skill-${index}`), {
+        name: `skill-${index}`,
+        description: `bulk skill ${index}`,
+      }))
+    }
+    const store = new SkillStore({ dir: join(root, 'store'), home: root, cwd: root })
+    const batch = await store.linkMany(paths)
+    assert.equal(batch.entries.length, total)
+    assert.equal(store.list().length, total)
+    assert.ok(store.list().every(entry => entry.origin === 'external'))
+    // References are a standby queue, not installs: the overview must report
+    // them under `external`, never under copied `count`/`enabled`.
+    const summary = store.status()
+    assert.equal(summary.count, 0)
+    assert.equal(summary.enabled, total)
+    assert.equal(summary.external, total)
+    assert.equal(summary.skills, total)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('store: linkMany skips a broken folder and still links the rest', async () => {
+  const root = temp('skm-link-skip-')
+  try {
+    const good = writeSkillDir(join(root, 'good'), { name: 'good-skill' })
+    const broken = join(root, 'broken')
+    mkdirSync(broken, { recursive: true })
+    const store = new SkillStore({ dir: join(root, 'store'), home: root, cwd: root })
+    const batch = await store.linkMany([good, broken])
+    assert.equal(batch.entries.length, 1)
+    assert.equal(batch.entries[0].entry.id, 'good-skill')
+    assert.ok(batch.warnings.some(message => message.includes('缺少 SKILL.md')))
+    assert.deepEqual(store.list().map(entry => entry.id), ['good-skill'])
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
 test('store: a failing dependency install restores the previous version', async () => {
   const root = temp('skm-fail-')
   process.env.npm_config_cache = join(root, '.npm-cache')

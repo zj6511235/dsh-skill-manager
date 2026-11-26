@@ -157,7 +157,7 @@ dsh plugin --profile web add link:C:\Users\you\Desktop\agent\dsh-skill-manager
 
 ### REST 路由
 
-前缀 `/dsh-skill-manager/v1`，JSON，请求体上限 64 KiB。
+前缀 `/dsh-skill-manager/v1`，JSON，请求体上限 4 MiB（便于一次全选引用大量技能）。
 
 | 方法 | 路径 | 作用 |
 |---|---|---|

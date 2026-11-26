@@ -36,9 +36,10 @@ dsh plugin --profile web add link:C:\path\to\dsh-skill-manager
 
 ## Use the panel
 
-- **Installed** — enable/disable, repair dependencies, read the install log, remove. Entries marked “外部 · 不复制” are used where they already live; removing one only drops the reference.
+- **Installed** — copied skills: enable/disable, repair dependencies, read the install log, remove.
+- **引用队列 / Reference queue** — the standby queue: skills referenced in place. They wait here and are called on demand per task; enabling/disabling and dropping a reference happen here too. The overview counts them separately from installed copies.
 - **SkillHub** — search and install public skills.
-- **直接使用其他 Agent / Use other agents** — automatically detects which agent skill folders exist on this computer (Claude Code, Codex, Cursor, Windsurf, Gemini, WorkBuddy…), shows each platform with its skill count, and lets you expand a platform, tick one or several skills, select a whole platform, or select everything. Nothing is copied and the original folders stay untouched.
+- **引用其他 Agent / Reference other agents** — automatically detects which agent skill folders exist on this computer (Claude Code, Codex, Cursor, Windsurf, Gemini, WorkBuddy…), shows each platform with its skill count, and lets you expand a platform. **Tick the skills first (selection only, no request), then click "Reference selected" to submit them in one tolerant batch.** Platform-level and global "select all / clear" help; invalid folders are skipped with a notice instead of aborting the batch. There is no count limit. After referencing, the assistant recognizes and calls the right skill per task automatically. Nothing is copied and the original folders stay untouched.
 - **Import from agents** — scan and copy a skill into this store as an independent copy.
 - **对话安装技能 / Install by chat** — the first tab. Describe the need in one sentence (“make PPT”, “extract PDF text”). It searches SkillHub and shows matching skills with descriptions and an Install button; reply “install 2” to pick by number. When nothing matches, it offers a ready-to-copy request for the main DSH assistant to build one.
 
