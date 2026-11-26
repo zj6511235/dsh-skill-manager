@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+.npm-cache/
+
+# Build output
+dist/
+lib/*.map
+*.tsbuildinfo
+
+# Local test stores
+.test-store/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

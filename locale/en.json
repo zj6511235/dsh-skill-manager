@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Skill Store",
+    "description": "A local store for third-party skills and MCP servers: multi-source install, dependency self-heal, Web panel and CLI.",
+    "detail": "docs/DETAIL.md"
+  }
+}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Skill Store">
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="#3f7f6f" opacity="0.14"/>
+  <g fill="none" stroke="#2f6b5c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="20" y="24" width="24" height="20" rx="5"/>
+    <path d="M32 24v-6"/>
+    <path d="M26 34h12"/>
+  </g>
+</svg>

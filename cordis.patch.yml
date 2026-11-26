@@ -1,0 +1,5 @@
+# dsh-skill-manager bundle patch: one Host row plus the Client plugin named by
+# `dsh.client` in package.json.
+- insert:
+    - id: dsh-skill-manager
+      name: dsh-skill-manager

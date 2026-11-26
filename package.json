@@ -1,0 +1,75 @@
+{
+  "name": "dsh-skill-manager",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Local store for third-party skills and MCP servers: npm/GitHub/SkillHub/zip install, dependency self-heal, other-agent import, Web panel and CLI.",
+  "license": "MIT",
+  "author": "zj6511235",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zj6511235/dsh-skill-manager.git"
+  },
+  "homepage": "https://github.com/zj6511235/dsh-skill-manager#readme",
+  "bugs": {
+    "url": "https://github.com/zj6511235/dsh-skill-manager/issues"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "skills",
+    "skill-store",
+    "mcp",
+    "skillhub"
+  ],
+  "bin": {
+    "dsh-skill": "bin/dsh-skill.mjs"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "host-api.js",
+    "lib",
+    "bin",
+    "scripts",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "docs",
+    "icon.svg",
+    "README.md",
+    "LICENSE",
+    ".gitignore"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test --test-isolation=none test/*.test.mjs",
+    "check": "npm run build && npm test"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    }
+  }
+}
